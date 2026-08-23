@@ -51,6 +51,7 @@ export type Dictionary = {
     minutes: string;
     postLabels: Record<string, string>;
     navMap: string;
+    navSession: string;
     navRosters: string;
     navFatigue: string;
     navTeam: string;

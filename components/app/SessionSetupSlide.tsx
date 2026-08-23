@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { useState } from "react";
+import { AppScreenHeader } from "@/components/app/AppScreenHeader";
 import { defaultSessionId, demoSessions, type PostId } from "@/data/demoSessions";
 import {
   basePostIds,
@@ -35,17 +35,6 @@ export function SessionSetupSlide() {
   const [windowId, setWindowId] = useState(defaultSessionId);
   const [filled, setFilled] = useState(false);
 
-  useEffect(() => {
-    if (!op.setupOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") op.closeSetup();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [op]);
-
-  if (!op.setupOpen) return null;
-
   const session =
     demoSessions.find((item) => item.id === windowId) ?? demoSessions[1];
   const needed = neededPosts(op.needs);
@@ -54,25 +43,13 @@ export function SessionSetupSlide() {
   const tabs: SetupTab[] = ["posts", "people", "needs", "fill"];
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-white lg:left-[248px]">
-      <div className="flex items-start justify-between gap-3 border-b border-[#E6EEF2] px-4 py-4 md:px-6">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-navy">{t.app.setupTitle}</p>
-          <p className="mt-1 text-xs text-navy/50">
-            {op.setupTab === "posts" ? t.app.postsPlanLead : t.app.setupLead}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={op.closeSetup}
-          className="grid h-9 w-9 place-items-center rounded-lg text-navy/50 hover:bg-[#F3F8FA] hover:text-navy"
-          aria-label={t.header.closeMenu}
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+    <div className="min-w-0 space-y-4">
+      <AppScreenHeader
+        title={t.ui.navSession}
+        lead={op.setupTab === "posts" ? t.app.postsPlanLead : t.app.setupLead}
+      />
 
-      <div className="flex flex-wrap gap-1 border-b border-[#E6EEF2] px-3 py-2 md:px-6">
+      <div className="flex flex-wrap gap-1">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -96,7 +73,7 @@ export function SessionSetupSlide() {
         ))}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6">
+      <div>
         {op.setupTab === "posts" && <PostsPlanSlide />}
 
           {op.setupTab === "people" && (
