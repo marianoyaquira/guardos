@@ -23,31 +23,31 @@ export const fatigueThresholdMinutes = 180;
 export const demoFatigueData: FatigueEntry[] = [
   {
     id: "gv01",
-    label: "GV 01",
+    label: "LG 01",
     minutes: { reef: 75, piscina: 60, pier: 30, controle: 20, lobby: 10 },
     status: "OK",
   },
   {
     id: "gv03",
-    label: "GV 03",
+    label: "LG 03",
     minutes: { reef: 85, piscina: 40, pier: 20, controle: 0, lobby: 0 },
     status: "ATENÇÃO",
   },
   {
     id: "gv06",
-    label: "GV 06",
+    label: "LG 06",
     minutes: { reef: 95, piscina: 70, pier: 40, controle: 20, lobby: 5 },
     status: "ALTO",
   },
   {
     id: "gv04",
-    label: "GV 04",
+    label: "LG 04",
     minutes: { reef: 80, piscina: 60, pier: 40, controle: 25, lobby: 10 },
     status: "OK",
   },
   {
     id: "gv02",
-    label: "GV 02",
+    label: "LG 02",
     minutes: { reef: 40, piscina: 50, pier: 20, controle: 15, lobby: 5 },
     status: "OK",
   },

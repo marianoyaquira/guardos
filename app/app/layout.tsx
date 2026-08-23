@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mapa · GuardOS",
+  title: "GuardOS",
   description:
-    "Centro operacional do supervisor — mapa de rodízio, cobertura e sessão ativa.",
+    "The Guard Operational System — live map, rosters, fatigue, team, reports, and inventory.",
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

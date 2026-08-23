@@ -20,7 +20,7 @@
   --accent: #00a8b5;
   --accent-muted: rgb(0 168 181 / 0.12);
   --radius: 16px;
-  --space-section: clamp(4.5rem, 8vw, 8rem);
+  --space-section: clamp(3.25rem, 6vw, 6rem);
 }
 
 @theme inline {
@@ -85,6 +85,13 @@ body {
   font-size: clamp(2.25rem, 5vw, 4.4rem);
   line-height: 0.95;
   letter-spacing: -0.035em;
+  font-weight: 650;
+}
+
+.display-hero {
+  font-size: clamp(2.85rem, 8vw, 6.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
   font-weight: 650;
 }
 

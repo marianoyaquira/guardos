@@ -1,11 +1,13 @@
 export const site = {
   name: "GuardOS",
-  tagline: "Sistema operacional do guarda-vidas",
+  tagline: "The Guard Operational System",
+  domain: "theguardos.com",
   description:
     "Uma plataforma para montar, automatizar e auditar o rodízio de segurança aquática.",
+  url: "https://theguardos.com",
   contact: {
     name: "",
-    email: "contato@guardos.com.br",
+    email: "info@theguardos.com",
     phone: "",
     website: "",
   },
@@ -15,10 +17,8 @@ export const site = {
 } as const;
 
 export const nav = [
-  { href: "#solucao", label: "Solução" },
-  { href: "#recursos", label: "Recursos" },
-  { href: "#prova", label: "Prova real" },
-  { href: "#investimento", label: "Investimento" },
-  { href: "#roadmap", label: "Roadmap" },
+  { href: "#solucao", label: "Operação" },
+  { href: "#recursos", label: "Plataforma" },
+  { href: "#prova", label: "Surfland" },
   { href: "#contato", label: "Contato" },
 ] as const;

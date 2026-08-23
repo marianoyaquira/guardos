@@ -6,14 +6,13 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { LiveOperation } from "@/components/LiveOperation";
 import { Modules } from "@/components/Modules";
-import { Pricing } from "@/components/Pricing";
-import { ProblemSection } from "@/components/ProblemSection";
 import { Roadmap } from "@/components/Roadmap";
+import { RiskNarrative } from "@/components/RiskNarrative";
 import { RotationExpress } from "@/components/RotationExpress";
-import { RotationMap } from "@/components/RotationMap";
+import { ProofStrip } from "@/components/ProofStrip";
 import { SurflandProof } from "@/components/SurflandProof";
-import { TrackingMessage } from "@/components/TrackingMessage";
 import { getDictionary, type Locale } from "@/i18n";
 import { I18nProvider } from "@/lib/i18n-context";
 
@@ -26,25 +25,25 @@ export function Landing({ locale }: { locale: Locale }) {
         <Header />
         <main>
           <Hero />
-          <ProblemSection />
-          <section id="solucao" className="bg-aqua">
-            <div className="mx-auto max-w-7xl px-4 py-[var(--space-section)] sm:px-6 lg:px-8">
-              <h2 className="section-title max-w-3xl text-navy">
-                {t.product.title}
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg text-navy/58">{t.product.body}</p>
-              <div className="mt-10 space-y-6">
-                <RotationMap />
-                <TrackingMessage />
-                <RotationExpress />
-                <FatigueChart />
-                <FairnessRanking />
+          <ProofStrip />
+          <LiveOperation />
+          <RiskNarrative />
+          <section className="overflow-x-hidden bg-white">
+            <div className="mx-auto max-w-7xl space-y-20 overflow-x-hidden px-4 py-16 sm:px-6 lg:px-8 lg:space-y-24 lg:py-20">
+              <div>
+                <p className="text-[11px] font-semibold tracking-[0.16em] text-navy/35 uppercase">
+                  {t.triad}
+                </p>
+                <div className="mt-5">
+                  <RotationExpress />
+                </div>
               </div>
+              <FatigueChart />
+              <FairnessRanking />
             </div>
           </section>
-          <Modules />
           <SurflandProof />
-          <Pricing />
+          <Modules />
           <Roadmap />
           <FinalCTA />
         </main>

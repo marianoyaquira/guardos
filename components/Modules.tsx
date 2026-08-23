@@ -1,73 +1,41 @@
 "use client";
 
-import Image from "next/image";
 import {
-  CalendarRange,
-  ClipboardList,
-  Package,
-  Shield,
+  CalendarDays,
+  FileChartColumn,
+  Monitor,
   UserPlus,
-  Users,
+  Contact,
+  Package,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
-import { cn } from "@/lib/cn";
 
-const icons = [CalendarRange, ClipboardList, Shield, UserPlus, Users, Package];
+const moduleIcons = [CalendarDays, FileChartColumn, Monitor, UserPlus, Contact, Package];
 
 export function Modules() {
   const { t } = useI18n();
 
   return (
-    <section id="recursos" className="bg-aqua">
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/surf-wave.jpg"
-            alt={t.modules.imageAlt}
-            fill
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy/80 via-navy/55 to-navy/30" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-          <p className="kicker text-cyan">{t.modules.kicker}</p>
-          <h2 className="section-title mt-3 max-w-2xl text-white">
-            {t.modules.title}
-          </h2>
-          <p className="mt-4 max-w-xl text-white/70">{t.modules.body}</p>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <section id="recursos" className="bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <h2 className="max-w-xl text-[1.45rem] font-semibold tracking-[-0.03em] text-navy sm:text-2xl">
+          {t.modules.title}
+        </h2>
+        <p className="mt-2 max-w-lg text-sm text-navy/55">{t.modules.body}</p>
+        <ul className="mt-8 grid gap-x-10 gap-y-5 sm:grid-cols-2">
           {t.modules.items.map((item, index) => {
-            const Icon = icons[index];
+            const Icon = moduleIcons[index];
             return (
-              <article
-                key={item.title}
-                className={cn(
-                  "rounded-[20px] border border-transparent pt-5 transition-colors hover:border-cyan/30",
-                  "border-t border-navy/10",
-                  item.weight === "primary" && "lg:pt-6",
-                )}
-              >
-                <Icon className="h-5 w-5 text-cyan-deep" strokeWidth={1.6} />
-                <h3
-                  className={cn(
-                    "mt-4 font-semibold tracking-[-0.02em] text-navy",
-                    item.weight === "primary" ? "text-xl" : "text-base",
-                  )}
-                >
+              <li key={item.title} className="border-t border-navy/10 pt-3">
+                <p className="flex items-center gap-2 text-sm font-semibold text-navy">
+                  <Icon className="h-3.5 w-3.5 shrink-0 text-navy/35" strokeWidth={1.5} aria-hidden />
                   {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-navy/58">
-                  {item.body}
                 </p>
-              </article>
+                <p className="mt-1 text-sm leading-relaxed text-navy/52">{item.body}</p>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

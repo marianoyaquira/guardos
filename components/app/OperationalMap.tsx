@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { MapControls } from "@/components/app/MapControls";
-import { PostLegend } from "@/components/app/PostLegend";
 import { PostMarker } from "@/components/app/PostMarker";
 import { PostPopover } from "@/components/app/PostPopover";
 import {
@@ -10,27 +9,40 @@ import {
   type DemoSession,
   type PostId,
 } from "@/data/demoSessions";
+import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
 export function OperationalMap({
   session,
   preview = false,
   size = "app",
+  selected: selectedProp,
+  onSelectedChange,
 }: {
   session: DemoSession;
   preview?: boolean;
-  size?: "preview" | "section" | "app";
+  size?: "preview" | "section" | "capture" | "app";
+  selected?: PostId | null;
+  onSelectedChange?: (id: PostId | null) => void;
 }) {
+  const { t } = useI18n();
   const [zoom, setZoom] = useState(1);
   const [expanded, setExpanded] = useState(false);
-  const [selected, setSelected] = useState<PostId | null>(null);
+  const [internalSelected, setInternalSelected] = useState<PostId | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
+  const selected = selectedProp !== undefined ? selectedProp : internalSelected;
+
+  function setSelected(id: PostId | null) {
+    if (selectedProp !== undefined) onSelectedChange?.(id);
+    else setInternalSelected(id);
+  }
 
   const selectedPost = mapPosts.find((post) => post.id === selected);
   const selectedAssignment = selected ? session.assignments[selected] : null;
 
   useEffect(() => {
     setSelected(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset when the session changes
   }, [session.id]);
 
   useEffect(() => {
@@ -43,6 +55,13 @@ export function OperationalMap({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  const popoverLeft = selectedPost
+    ? 50 + (selectedPost.x - 50) * zoom
+    : 0;
+  const popoverTop = selectedPost
+    ? 50 + (selectedPost.y - 50) * zoom
+    : 0;
 
   return (
     <div
@@ -60,6 +79,7 @@ export function OperationalMap({
           (preview || size === "preview") &&
             "aspect-[16/10] min-h-[220px] sm:min-h-[260px]",
           size === "section" && "h-[min(52vh,520px)] min-h-[320px]",
+          size === "capture" && "h-[min(56vh,620px)] min-h-[300px]",
           !preview && size === "app" && "h-[min(68vh,720px)] min-h-[420px]",
         )}
         onClick={() => setSelected(null)}
@@ -72,16 +92,13 @@ export function OperationalMap({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src="/guardos/wave-pool-map.jpg"
-              alt="Mapa operacional da piscina de ondas"
-              className="h-full w-full object-cover object-center"
+              alt={t.ui.mapAlt}
+              className="h-full w-full object-cover object-[center_42%]"
               onError={() => setImageFailed(true)}
             />
           ) : (
             <WavePoolFallback />
           )}
-        </div>
-
-        <div className="absolute inset-0">
           {mapPosts.map((post) => (
             <div
               key={post.id}
@@ -92,25 +109,31 @@ export function OperationalMap({
                 post={post}
                 assignment={session.assignments[post.id]}
                 selected={selected === post.id}
+                zoom={zoom}
                 onSelect={(id) =>
-                  setSelected((current) => (current === id ? null : id))
+                  setSelected(selected === id ? null : id)
                 }
               />
             </div>
           ))}
-          {selectedPost && selectedAssignment && (
-            <div onClick={(event) => event.stopPropagation()}>
-              <PostPopover post={selectedPost} assignment={selectedAssignment} />
-            </div>
-          )}
         </div>
 
-        {!preview && <PostLegend />}
+        {selectedPost && selectedAssignment && (
+          <div onClick={(event) => event.stopPropagation()}>
+            <PostPopover
+              post={selectedPost}
+              assignment={selectedAssignment}
+              left={popoverLeft}
+              top={popoverTop}
+            />
+          </div>
+        )}
+
         <MapControls
           expanded={expanded}
-          hideFullscreen={preview}
+          hideFullscreen={preview || size === "capture"}
           onFullscreen={() => {
-            if (preview) return;
+            if (preview || size === "capture") return;
             setExpanded((value) => !value);
           }}
           onCenter={() => {

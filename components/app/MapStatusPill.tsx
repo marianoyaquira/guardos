@@ -1,4 +1,5 @@
 import type { FatigueStatus } from "@/data/demoFatigueData";
+import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
 const styles: Record<FatigueStatus, string> = {
@@ -14,6 +15,8 @@ export function MapStatusPill({
   status: FatigueStatus;
   compact?: boolean;
 }) {
+  const { t } = useI18n();
+
   return (
     <span
       className={cn(
@@ -22,7 +25,7 @@ export function MapStatusPill({
         styles[status],
       )}
     >
-      {status}
+      {t.fatigue.status[status]}
     </span>
   );
 }

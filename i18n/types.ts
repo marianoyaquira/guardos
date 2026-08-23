@@ -1,13 +1,12 @@
 export type Locale = "pt" | "en";
 
 export type Dictionary = {
-  meta: { title: string; description: string };
-  brand: { tagline: string };
+  meta: { title: string; description: string; ogAlt: string };
+  brand: { tagline: string; motif: string; domain: string };
   nav: { href: string; label: string }[];
   header: { cta: string; tryApp: string; openMenu: string; closeMenu: string };
   lang: { pt: string; en: string };
   hero: {
-    eyebrow: string;
     titleA: string;
     titleB: string;
     body: string;
@@ -15,7 +14,95 @@ export type Dictionary = {
     cta: string;
     secondary: string;
     imageAlt: string;
+    coverage: string;
     signals: string[];
+  };
+  operation: {
+    title: string;
+    body: string;
+    layer: string;
+  };
+  ui: {
+    fatigueOverview: string;
+    viewDetails: string;
+    lifeguard: string;
+    totalTime: string;
+    status: string;
+    posts: string;
+    controlTower: string;
+    pier: string;
+    edgePositions: string;
+    lobby: string;
+    pinOk: string;
+    pinWatch: string;
+    timeOnPost: string;
+    nextSwap: string;
+    session: string;
+    teamA: string;
+    teamB: string;
+    sessionLabel: string;
+    break: string;
+    lunch: string;
+    minutes: string;
+    postLabels: Record<string, string>;
+    navMap: string;
+    navRosters: string;
+    navFatigue: string;
+    navTeam: string;
+    navReports: string;
+    navInventory: string;
+    navSettings: string;
+    productTagline: string;
+    logout: string;
+    supervisor: string;
+    currentSession: string;
+    postsCovered: string;
+    activeGuards: string;
+    operationCoverage: string;
+    editRoster: string;
+    notifications: string;
+    moreActions: string;
+    sessionsToday: string;
+    newSession: string;
+    sessionBreaks: string;
+    noBreaks: string;
+    mapAlt: string;
+    fullscreen: string;
+    exitFullscreen: string;
+    centerMap: string;
+    zoomIn: string;
+    zoomOut: string;
+    appHost: string;
+  };
+  app: {
+    demoNote: string;
+    roleLifeguard: string;
+    roleSupervisor: string;
+    onPost: string;
+    offWater: string;
+    rostersLead: string;
+    post: string;
+    fatigueLead: string;
+    exposureByZone: string;
+    teamLead: string;
+    reportsLead: string;
+    export: string;
+    inventoryLead: string;
+    item: string;
+    quantity: string;
+    location: string;
+    settingsLead: string;
+    unit: string;
+    unitValue: string;
+    notifyWatch: string;
+    notifyHigh: string;
+    language: string;
+    languageValue: string;
+    reportRotation: string;
+    reportFatigue: string;
+    reportFairness: string;
+    reportPositions: string;
+    periodToday: string;
   };
   mockup: {
     operation: string;
@@ -59,6 +146,21 @@ export type Dictionary = {
     body: string;
     steps: { title: string; body: string }[];
   };
+  risk: {
+    titleA: string;
+    titleB: string;
+    body: string;
+    chain: {
+      value?: string;
+      unit?: string;
+      label: string;
+      overrun?: string;
+      tone: "plan" | "delay" | "over" | "fatigue" | "risk";
+    }[];
+    controls: string;
+    pillars: { title: string; body: string }[];
+  };
+  triad: string;
   fatigue: {
     kicker: string;
     titleA: string;
@@ -88,27 +190,18 @@ export type Dictionary = {
     items: { title: string; body: string; weight: "primary" | "secondary" }[];
   };
   proof: {
-    eyebrow: string;
     headline: string;
-    body: string;
-    imagePending: string;
-    imageHint: string;
-    awaiting: string;
-    metrics: { id: string; label: string }[];
-    quotePending: string;
-    namePending: string;
-  };
-  pricing: {
-    headline: string;
-    note: string;
-    plans: {
-      id: string;
-      label: string;
-      price: string;
-      cadence: string;
-      featured?: boolean;
-      items: string[];
-    }[];
+    quote: string;
+    emphasis: string;
+    name: string;
+    role: string;
+    organization: string;
+    photoAlt: string;
+    imageAlt: string;
+    operatorsLabel: string;
+    pendingOperator: string;
+    pendingVoice: string;
+    readFull: string;
   };
   roadmap: {
     title: string;
@@ -117,9 +210,7 @@ export type Dictionary = {
   };
   cta: {
     title: string;
-    steps: { title: string; body: string }[];
-    button: string;
-    tryApp: string;
+    body: string;
     name: string;
     email: string;
     park: string;
@@ -128,6 +219,7 @@ export type Dictionary = {
     mailSubject: string;
     mailBody: string;
     imageAlt: string;
+    writeTo: string;
   };
   footer: { line: string };
   demo: string;

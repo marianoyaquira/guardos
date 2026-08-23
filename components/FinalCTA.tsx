@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { FormEvent, useState } from "react";
-import { CtaButton } from "@/components/CtaButton";
 import { site } from "@/data/site";
 import { useI18n } from "@/lib/i18n-context";
 
@@ -41,70 +40,52 @@ export function FinalCTA() {
         <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/70 to-transparent" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 py-[var(--space-section)] sm:px-6 lg:px-8">
-        <h2 className="section-title max-w-xl text-white">{t.cta.title}</h2>
-        <ol className="mt-10 grid max-w-3xl gap-6 sm:grid-cols-3">
-          {t.cta.steps.map((step, index) => (
-            <li key={step.title} className="flex gap-3">
-              <p className="w-8 shrink-0 text-sm font-semibold text-cyan">
-                0{index + 1}
-              </p>
-              <div>
-                <h3 className="text-lg font-semibold tracking-[-0.02em]">
-                  {step.title}
-                </h3>
-                <p className="mt-1 text-sm leading-relaxed text-white/60">
-                  {step.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <h2 className="max-w-xl text-[1.75rem] font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+          {t.cta.title}
+        </h2>
+        <p className="mt-4 max-w-xl text-lg text-white/60">{t.cta.body}</p>
+        <p className="mt-3 text-sm text-white/50">
+          {t.cta.writeTo}{" "}
+          <a
+            href={`mailto:${site.contact.email}`}
+            className="text-white/80 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white"
+          >
+            {site.contact.email}
+          </a>
+        </p>
 
-        <div className="mt-10 max-w-xl">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <CtaButton href={site.appHref} icon="play">
-              {t.cta.tryApp}
-            </CtaButton>
-            <CtaButton
-              href={`mailto:${site.contact.email}?subject=${encodeURIComponent(t.cta.mailSubject)}`}
-              variant="ghost"
-            >
-              {t.cta.button}
-            </CtaButton>
-          </div>
-          <form onSubmit={onSubmit} className="mt-8 grid gap-3 sm:grid-cols-2">
-            <label className="block text-sm">
-              <span className="mb-1.5 block text-white/55">{t.cta.name}</span>
-              <input
-                name="name"
-                required
-                className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
-              />
-            </label>
-            <label className="block text-sm">
-              <span className="mb-1.5 block text-white/55">{t.cta.email}</span>
-              <input
-                name="email"
-                type="email"
-                required
-                className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
-              />
-            </label>
-            <label className="block text-sm sm:col-span-2">
-              <span className="mb-1.5 block text-white/55">{t.cta.park}</span>
-              <input
-                name="park"
-                className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
-              />
-            </label>
-            <button
-              type="submit"
-              className="h-12 rounded-xl bg-cyan px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgb(0_168_181_/_0.28)] transition-all duration-200 hover:-translate-y-px hover:bg-cyan-deep sm:col-span-2"
-            >
-              {sent ? t.cta.sent : t.cta.submit}
-            </button>
-          </form>
-        </div>
+        <form onSubmit={onSubmit} className="mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
+          <label className="block text-sm">
+            <span className="mb-1.5 block text-white/55">{t.cta.name}</span>
+            <input
+              name="name"
+              required
+              className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1.5 block text-white/55">{t.cta.email}</span>
+            <input
+              name="email"
+              type="email"
+              required
+              className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
+            />
+          </label>
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1.5 block text-white/55">{t.cta.park}</span>
+            <input
+              name="park"
+              className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white outline-none focus-visible:border-cyan"
+            />
+          </label>
+          <button
+            type="submit"
+            className="h-12 rounded-xl bg-cyan px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgb(0_168_181_/_0.28)] transition-all duration-200 hover:-translate-y-px hover:bg-cyan-deep sm:col-span-2"
+          >
+            {sent ? t.cta.sent : t.cta.submit}
+          </button>
+        </form>
       </div>
     </section>
   );

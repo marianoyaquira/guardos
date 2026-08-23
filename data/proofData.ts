@@ -1,36 +1,46 @@
-export type ProofMetric = {
+export type OperatorMark = {
   id: string;
-  value: string | null;
-  label: string;
+  name: string;
+  logoSrc?: string;
+};
+
+export type PendingSlot = {
+  id: string;
+  pending: true;
+};
+
+export type ProofVoice = {
+  id: string;
+  name: string;
+  organization: string;
+  photoSrc: string;
 };
 
 export const proofData = {
-  eyebrow: "Prova real",
-  headline: "GuardOS já opera no Surfland Brasil.",
-  body: "Garopaba/SC — o mesmo sistema apresentado aqui roda a operação diária de guarda-vidas.",
-  imageSrc: null as string | null,
-  imageAlt: "Fotografia operacional da Surfland Brasil — a substituir",
-  metrics: [
-    {
-      id: "months",
-      value: null,
-      label: "meses em operação contínua",
-    },
-    {
-      id: "guards",
-      value: null,
-      label: "guarda-vidas gerenciados",
-    },
-    {
-      id: "rotations",
-      value: null,
-      label: "rodízios gerados por dia",
-    },
-  ] satisfies ProofMetric[],
-  testimonial: {
-    quote: null as string | null,
-    name: null as string | null,
-    role: null as string | null,
-    organization: "Surfland Brasil",
+  photoSrc: "/images/surfland/pedro.png",
+  name: "Pedro",
+  organization: "Surfland Brasil",
+} as const;
+
+export const operators: Array<OperatorMark | PendingSlot> = [
+  { id: "surfland", name: "Surfland Brasil" },
+  { id: "operator-2", pending: true },
+  { id: "operator-3", pending: true },
+  { id: "operator-4", pending: true },
+];
+
+export const voices: Array<ProofVoice | PendingSlot> = [
+  {
+    id: "pedro",
+    name: proofData.name,
+    organization: proofData.organization,
+    photoSrc: proofData.photoSrc,
   },
-};
+  { id: "voice-2", pending: true },
+];
+
+export function isPending(
+  item: OperatorMark | ProofVoice | PendingSlot,
+): item is PendingSlot {
+  return "pending" in item && item.pending === true;
+}

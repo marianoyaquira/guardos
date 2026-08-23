@@ -14,7 +14,7 @@ export const demoFairnessData: FairnessEntry[] = [
   {
     id: "gva",
     rank: 1,
-    label: "GV A",
+    label: "LG A",
     shifts: 12,
     guidePercent: 8,
     rotationIndex: 68,
@@ -23,7 +23,7 @@ export const demoFairnessData: FairnessEntry[] = [
   {
     id: "gvb",
     rank: 2,
-    label: "GV B",
+    label: "LG B",
     shifts: 15,
     guidePercent: 14,
     rotationIndex: 92,
@@ -32,7 +32,7 @@ export const demoFairnessData: FairnessEntry[] = [
   {
     id: "gvc",
     rank: 3,
-    label: "GV C",
+    label: "LG C",
     shifts: 16,
     guidePercent: 15,
     rotationIndex: 100,
@@ -41,7 +41,7 @@ export const demoFairnessData: FairnessEntry[] = [
   {
     id: "gvd",
     rank: 4,
-    label: "GV D",
+    label: "LG D",
     shifts: 10,
     guidePercent: 6,
     rotationIndex: 54,
@@ -50,7 +50,7 @@ export const demoFairnessData: FairnessEntry[] = [
   {
     id: "gve",
     rank: 5,
-    label: "GV E",
+    label: "LG E",
     shifts: 14,
     guidePercent: 12,
     rotationIndex: 84,

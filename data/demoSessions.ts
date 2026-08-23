@@ -26,6 +26,7 @@ export type MapPost = {
 export type PostAssignment = {
   initials: string;
   name: string;
+  photo: string;
   minutesOnPost: number;
   status: FatigueStatus;
   nextSwap: string;
@@ -34,6 +35,9 @@ export type PostAssignment = {
 export type FatigueRow = {
   id: string;
   label: string;
+  initials: string;
+  name: string;
+  photo: string;
   totalTime: string;
   status: FatigueStatus;
 };
@@ -60,28 +64,37 @@ export type DemoSession = {
 };
 
 export const mapPosts: MapPost[] = [
-  { id: "pier", code: "PIER", label: "Pier", kind: "special", x: 49, y: 30 },
-  { id: "p02", code: "02", label: "Posto 02", kind: "edge", x: 37, y: 18 },
-  { id: "p04", code: "04", label: "Posto 04", kind: "edge", x: 68, y: 24 },
-  { id: "p01", code: "01", label: "Posto 01", kind: "edge", x: 23, y: 34 },
-  { id: "ct", code: "CT", label: "Torre de Controle", kind: "special", x: 13, y: 46 },
-  { id: "p03", code: "03", label: "Posto 03", kind: "edge", x: 20, y: 58 },
-  { id: "p05", code: "05", label: "Posto 05", kind: "edge", x: 80, y: 46 },
-  { id: "p06", code: "06", label: "Posto 06", kind: "edge", x: 72, y: 66 },
-  { id: "p07", code: "07", label: "Posto 07", kind: "edge", x: 42, y: 72 },
-  { id: "lobby", code: "LOBBY", label: "Lobby", kind: "special", x: 52, y: 88 },
+  { id: "pier", code: "PIER", label: "Pier", kind: "special", x: 42, y: 42 },
+  { id: "p02", code: "02", label: "Posto 02", kind: "edge", x: 38, y: 24 },
+  { id: "p04", code: "04", label: "Posto 04", kind: "edge", x: 55, y: 22 },
+  { id: "p01", code: "01", label: "Posto 01", kind: "edge", x: 16, y: 55 },
+  { id: "ct", code: "CT", label: "Torre de Controle", kind: "special", x: 24, y: 36 },
+  { id: "p03", code: "03", label: "Posto 03", kind: "edge", x: 32, y: 68 },
+  { id: "p05", code: "05", label: "Posto 05", kind: "edge", x: 76, y: 38 },
+  { id: "p06", code: "06", label: "Posto 06", kind: "edge", x: 68, y: 58 },
+  { id: "p07", code: "07", label: "Posto 07", kind: "edge", x: 52, y: 74 },
+  { id: "lobby", code: "LOBBY", label: "Lobby", kind: "special", x: 86, y: 56 },
 ];
 
-const people = {
-  LS: { initials: "LS", name: "Leonardo Souza" },
-  MR: { initials: "MR", name: "Marcos Ribeiro" },
-  JP: { initials: "JP", name: "João Pedro" },
-  TZ: { initials: "TZ", name: "Thiago Zani" },
-  RC: { initials: "RC", name: "Rafael Costa" },
-  AA: { initials: "AA", name: "Ana Alves" },
-  GB: { initials: "GB", name: "Gabriel Bastos" },
-  AR: { initials: "AR", name: "Amanda Reis" },
-  BN: { initials: "BN", name: "Bruno Nunes" },
+export const people = {
+  LS: { initials: "LS", name: "Leonardo Souza", photo: "/guardos/avatars/ls.jpg" },
+  MR: { initials: "MR", name: "Marcos Ribeiro", photo: "/guardos/avatars/mr.jpg" },
+  JP: { initials: "JP", name: "João Pedro", photo: "/guardos/avatars/jp.jpg" },
+  TZ: { initials: "TZ", name: "Thiago Zani", photo: "/guardos/avatars/tz.jpg" },
+  RC: { initials: "RC", name: "Rafael Costa", photo: "/guardos/avatars/rc.jpg" },
+  AA: { initials: "AA", name: "Ana Alves", photo: "/guardos/avatars/aa.jpg" },
+  GB: { initials: "GB", name: "Gabriel Bastos", photo: "/guardos/avatars/gb.jpg" },
+  AR: { initials: "AR", name: "Amanda Reis", photo: "/guardos/avatars/ar.jpg" },
+  BN: { initials: "BN", name: "Bruno Nunes", photo: "/guardos/avatars/bn.jpg" },
+  FM: { initials: "FM", name: "Felipe Mendes", photo: "/guardos/avatars/fm.jpg" },
+} as const;
+
+const fatiguePeople = {
+  gv01: people.LS,
+  gv02: people.MR,
+  gv03: people.JP,
+  gv04: people.TZ,
+  gv06: people.RC,
 } as const;
 
 function assign(
@@ -91,6 +104,24 @@ function assign(
   nextSwap: string,
 ): PostAssignment {
   return { ...person, minutesOnPost, status, nextSwap };
+}
+
+function fatigue(
+  id: keyof typeof fatiguePeople,
+  totalTime: string,
+  status: FatigueStatus,
+): FatigueRow {
+  const person = fatiguePeople[id];
+  const number = id.replace("gv", "").padStart(2, "0");
+  return { id, label: `LG ${number}`, ...person, totalTime, status };
+}
+
+export function postIdForInitials(
+  session: DemoSession,
+  initials: string,
+): PostId | null {
+  const match = mapPosts.find((post) => session.assignments[post.id].initials === initials);
+  return match?.id ?? null;
 }
 
 export const demoSessions: DemoSession[] = [
@@ -113,14 +144,14 @@ export const demoSessions: DemoSession[] = [
       p07: assign(people.AR, 30, "OK", "09:10"),
       ct: assign(people.BN, 90, "OK", "09:30"),
       pier: assign(people.GB, 34, "OK", "09:00"),
-      lobby: assign(people.AA, 12, "OK", "09:20"),
+      lobby: assign(people.FM, 12, "OK", "09:20"),
     },
     fatigueSummary: [
-      { id: "gv01", label: "GV 01", totalTime: "1h10", status: "OK" },
-      { id: "gv03", label: "GV 03", totalTime: "0h55", status: "OK" },
-      { id: "gv06", label: "GV 06", totalTime: "1h20", status: "OK" },
-      { id: "gv04", label: "GV 04", totalTime: "1h05", status: "OK" },
-      { id: "gv02", label: "GV 02", totalTime: "0h40", status: "OK" },
+      fatigue("gv01", "1h10", "OK"),
+      fatigue("gv03", "0h55", "OK"),
+      fatigue("gv06", "1h20", "OK"),
+      fatigue("gv04", "1h05", "OK"),
+      fatigue("gv02", "0h40", "OK"),
     ],
     breaks: [{ id: "pause", label: "Pausa", duration: "15 min", tone: "pause" }],
   },
@@ -143,14 +174,14 @@ export const demoSessions: DemoSession[] = [
       p07: assign(people.GB, 28, "OK", "11:20"),
       ct: assign(people.AR, 90, "OK", "12:00"),
       pier: assign(people.BN, 48, "ALTO", "11:05"),
-      lobby: assign(people.AA, 15, "OK", "11:40"),
+      lobby: assign(people.FM, 15, "OK", "11:40"),
     },
     fatigueSummary: [
-      { id: "gv01", label: "GV 01", totalTime: "3h15", status: "OK" },
-      { id: "gv03", label: "GV 03", totalTime: "2h25", status: "ATENÇÃO" },
-      { id: "gv06", label: "GV 06", totalTime: "3h50", status: "ALTO" },
-      { id: "gv04", label: "GV 04", totalTime: "3h35", status: "OK" },
-      { id: "gv02", label: "GV 02", totalTime: "2h10", status: "OK" },
+      fatigue("gv01", "3h15", "OK"),
+      fatigue("gv03", "2h25", "ATENÇÃO"),
+      fatigue("gv06", "3h50", "ALTO"),
+      fatigue("gv04", "3h35", "OK"),
+      fatigue("gv02", "2h10", "OK"),
     ],
     breaks: [
       { id: "pause", label: "Pausa", duration: "15 min", tone: "pause" },
@@ -176,14 +207,14 @@ export const demoSessions: DemoSession[] = [
       p07: assign(people.MR, 20, "OK", "13:20"),
       ct: assign(people.BN, 45, "OK", "14:00"),
       pier: assign(people.AR, 28, "ATENÇÃO", "13:05"),
-      lobby: assign(people.AA, 10, "OK", "13:40"),
+      lobby: assign(people.FM, 10, "OK", "13:40"),
     },
     fatigueSummary: [
-      { id: "gv01", label: "GV 01", totalTime: "3h35", status: "OK" },
-      { id: "gv03", label: "GV 03", totalTime: "2h45", status: "ATENÇÃO" },
-      { id: "gv06", label: "GV 06", totalTime: "4h10", status: "ALTO" },
-      { id: "gv04", label: "GV 04", totalTime: "3h50", status: "OK" },
-      { id: "gv02", label: "GV 02", totalTime: "2h30", status: "OK" },
+      fatigue("gv01", "3h35", "OK"),
+      fatigue("gv03", "2h45", "ATENÇÃO"),
+      fatigue("gv06", "4h10", "ALTO"),
+      fatigue("gv04", "3h50", "OK"),
+      fatigue("gv02", "2h30", "OK"),
     ],
     breaks: [
       { id: "pause", label: "Pausa", duration: "15 min", tone: "pause" },
@@ -208,14 +239,14 @@ export const demoSessions: DemoSession[] = [
       p07: assign(people.TZ, 14, "OK", "15:25"),
       ct: assign(people.AR, 40, "OK", "16:00"),
       pier: assign(people.BN, 26, "OK", "15:05"),
-      lobby: assign(people.GB, 8, "OK", "15:40"),
+      lobby: assign(people.FM, 8, "OK", "15:40"),
     },
     fatigueSummary: [
-      { id: "gv01", label: "GV 01", totalTime: "4h00", status: "ATENÇÃO" },
-      { id: "gv03", label: "GV 03", totalTime: "3h05", status: "OK" },
-      { id: "gv06", label: "GV 06", totalTime: "4h30", status: "ALTO" },
-      { id: "gv04", label: "GV 04", totalTime: "4h10", status: "ATENÇÃO" },
-      { id: "gv02", label: "GV 02", totalTime: "2h50", status: "OK" },
+      fatigue("gv01", "4h00", "ATENÇÃO"),
+      fatigue("gv03", "3h05", "OK"),
+      fatigue("gv06", "4h30", "ALTO"),
+      fatigue("gv04", "4h10", "ATENÇÃO"),
+      fatigue("gv02", "2h50", "OK"),
     ],
     breaks: [
       { id: "pause", label: "Pausa", duration: "15 min", tone: "pause" },
@@ -240,14 +271,14 @@ export const demoSessions: DemoSession[] = [
       p07: assign(people.RC, 8, "OK", "17:25"),
       ct: assign(people.AR, 30, "OK", "18:00"),
       pier: assign(people.JP, 20, "ATENÇÃO", "17:05"),
-      lobby: assign(people.AA, 6, "OK", "17:40"),
+      lobby: assign(people.FM, 6, "OK", "17:40"),
     },
     fatigueSummary: [
-      { id: "gv01", label: "GV 01", totalTime: "4h20", status: "ATENÇÃO" },
-      { id: "gv03", label: "GV 03", totalTime: "3h20", status: "OK" },
-      { id: "gv06", label: "GV 06", totalTime: "4h45", status: "ALTO" },
-      { id: "gv04", label: "GV 04", totalTime: "4h25", status: "ATENÇÃO" },
-      { id: "gv02", label: "GV 02", totalTime: "3h05", status: "OK" },
+      fatigue("gv01", "4h20", "ATENÇÃO"),
+      fatigue("gv03", "3h20", "OK"),
+      fatigue("gv06", "4h45", "ALTO"),
+      fatigue("gv04", "4h25", "ATENÇÃO"),
+      fatigue("gv02", "3h05", "OK"),
     ],
     breaks: [],
   },

@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 type Props = {
   href: string;
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "ghost";
-  icon?: "arrow" | "play" | "none";
+  icon?: "arrow" | "launch" | "none";
   className?: string;
 };
 
@@ -30,10 +30,12 @@ export function CtaButton({
 
   const content = (
     <>
-      {icon === "play" && <Play className="h-3.5 w-3.5 fill-current" />}
       <span>{children}</span>
       {icon === "arrow" && (
         <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+      )}
+      {icon === "launch" && (
+        <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       )}
     </>
   );

@@ -7,9 +7,11 @@ import { cn } from "@/lib/cn";
 export function Logo({
   inverted = false,
   compact = false,
+  hideMotif = false,
 }: {
   inverted?: boolean;
   compact?: boolean;
+  hideMotif?: boolean;
 }) {
   const { locale, t } = useI18n();
 
@@ -40,14 +42,15 @@ export function Logo({
           GUARD
           <span className="text-cyan">OS</span>
         </span>
-        {!compact && (
+        {!hideMotif && (
           <span
             className={cn(
-              "mt-1 hidden text-[9px] font-medium tracking-[0.16em] uppercase sm:block",
-              inverted ? "text-white/55" : "text-navy/45",
+              "mt-1 hidden text-[8px] font-medium tracking-[0.14em] uppercase sm:block",
+              inverted ? "text-white/50" : "text-navy/40",
+              compact && "max-w-[12.5rem]",
             )}
           >
-            {t.brand.tagline}
+            {t.brand.motif}
           </span>
         )}
       </span>

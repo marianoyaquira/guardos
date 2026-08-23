@@ -1,6 +1,7 @@
 "use client";
 
 import { LocateFixed, Maximize2, Minimize2, Minus, Plus } from "lucide-react";
+import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
 export function MapControls({
@@ -18,6 +19,7 @@ export function MapControls({
   expanded: boolean;
   hideFullscreen?: boolean;
 }) {
+  const { t } = useI18n();
   const buttonClass =
     "grid h-10 w-10 place-items-center bg-white text-navy/70 transition-colors hover:bg-[#F3F8FA] hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan";
 
@@ -28,7 +30,7 @@ export function MapControls({
           type="button"
           className={buttonClass}
           onClick={onFullscreen}
-          aria-label={expanded ? "Sair da tela cheia" : "Tela cheia"}
+          aria-label={expanded ? t.ui.exitFullscreen : t.ui.fullscreen}
         >
           {expanded ? (
             <Minimize2 className="h-4 w-4" />
@@ -41,7 +43,7 @@ export function MapControls({
         type="button"
         className={cn(buttonClass, !hideFullscreen && "border-t border-[#E6EEF2]")}
         onClick={onCenter}
-        aria-label="Centralizar mapa"
+        aria-label={t.ui.centerMap}
       >
         <LocateFixed className="h-4 w-4" />
       </button>
@@ -49,7 +51,7 @@ export function MapControls({
         type="button"
         className={`${buttonClass} border-t border-[#E6EEF2]`}
         onClick={onZoomIn}
-        aria-label="Aproximar"
+        aria-label={t.ui.zoomIn}
       >
         <Plus className="h-4 w-4" />
       </button>
@@ -57,7 +59,7 @@ export function MapControls({
         type="button"
         className={`${buttonClass} border-t border-[#E6EEF2]`}
         onClick={onZoomOut}
-        aria-label="Afastar"
+        aria-label={t.ui.zoomOut}
       >
         <Minus className="h-4 w-4" />
       </button>
