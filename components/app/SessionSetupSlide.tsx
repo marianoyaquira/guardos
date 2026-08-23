@@ -9,6 +9,7 @@ import {
   neededPosts,
   weekdays,
 } from "@/data/operationSetup";
+import { PostsPlanSlide } from "@/components/app/PostsPlanSlide";
 import { fillAssignments } from "@/lib/fillSession";
 import { useOperation, type SetupTab } from "@/lib/operation-context";
 import { postLabel } from "@/lib/localizeDemo";
@@ -60,7 +61,13 @@ export function SessionSetupSlide() {
         aria-label={t.header.closeMenu}
         onClick={op.closeSetup}
       />
-      <aside className="absolute inset-y-0 right-0 flex w-full max-w-[28rem] flex-col border-l border-[#E6EEF2] bg-white shadow-[-16px_0_40px_rgb(7_27_51_/_0.1)]">
+      <PostsPlanSlide />
+      <aside
+        className={cn(
+          "absolute inset-y-0 right-0 flex w-full max-w-[28rem] flex-col border-l border-[#E6EEF2] bg-white shadow-[-16px_0_40px_rgb(7_27_51_/_0.1)]",
+          op.setupFocus === "posts" && "hidden lg:flex",
+        )}
+      >
         <div className="flex items-start justify-between gap-3 border-b border-[#E6EEF2] px-4 py-4">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-navy">{t.app.setupTitle}</p>
@@ -73,6 +80,23 @@ export function SessionSetupSlide() {
             aria-label={t.header.closeMenu}
           >
             <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="flex gap-1 border-b border-[#E6EEF2] px-3 py-2 lg:hidden">
+          <button
+            type="button"
+            onClick={() => op.focusSetup("posts")}
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold text-navy/55 hover:bg-[#F3F8FA]"
+          >
+            {t.app.openPostsPlan}
+          </button>
+          <button
+            type="button"
+            onClick={() => op.focusSetup("setup")}
+            className="rounded-lg bg-cyan px-3 py-1.5 text-xs font-semibold text-white"
+          >
+            {t.app.setupTitle}
           </button>
         </div>
 

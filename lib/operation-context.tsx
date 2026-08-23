@@ -36,10 +36,15 @@ type OperationState = {
   overrides: Partial<Record<string, Record<PostId, PostAssignment>>>;
 };
 
+export type SetupFocus = "posts" | "setup";
+
 type OperationContextValue = OperationState & {
   setupOpen: boolean;
   setupTab: SetupTab;
+  setupFocus: SetupFocus;
   openSetup: (tab?: SetupTab) => void;
+  openPlan: () => void;
+  focusSetup: (focus: SetupFocus) => void;
   closeSetup: () => void;
   addPerson: (input: {
     name: string;
@@ -75,6 +80,7 @@ export function OperationProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
   const [setupTab, setSetupTab] = useState<SetupTab>("people");
+  const [setupFocus, setSetupFocus] = useState<SetupFocus>("posts");
 
   useEffect(() => {
     try {
@@ -112,8 +118,18 @@ export function OperationProvider({ children }: { children: ReactNode }) {
       ...state,
       setupOpen,
       setupTab,
+      setupFocus,
       openSetup(tab = "people") {
         setSetupTab(tab);
+        setSetupFocus("setup");
+        setSetupOpen(true);
+      },
+      openPlan() {
+        setSetupFocus("posts");
+        setSetupOpen(true);
+      },
+      focusSetup(focus) {
+        setSetupFocus(focus);
         setSetupOpen(true);
       },
       closeSetup() {
@@ -233,7 +249,7 @@ export function OperationProvider({ children }: { children: ReactNode }) {
       },
       liveSession,
     };
-  }, [setupOpen, setupTab, state]);
+  }, [setupOpen, setupTab, setupFocus, state]);
 
   return (
     <OperationContext.Provider value={value}>{children}</OperationContext.Provider>

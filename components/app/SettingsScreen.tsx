@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 
 export function SettingsScreen() {
   const { t } = useI18n();
-  const { openSetup } = useOperation();
+  const { openSetup, openPlan } = useOperation();
   const [watch, setWatch] = useState(true);
   const [high, setHigh] = useState(true);
 
@@ -16,6 +16,16 @@ export function SettingsScreen() {
     <div className="min-w-0 space-y-5">
       <AppScreenHeader title={t.ui.navSettings} lead={t.app.settingsLead} />
       <div className="max-w-xl space-y-3 rounded-2xl border border-[#E6EEF2] bg-white p-5">
+        <button
+          type="button"
+          onClick={() => openPlan()}
+          className="flex w-full items-center justify-between rounded-xl border border-[#E6EEF2] px-3 py-3 text-left"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-navy">{t.app.postsPlanTitle}</span>
+            <span className="mt-0.5 block text-xs text-navy/45">{t.app.postsPlanLead}</span>
+          </span>
+        </button>
         <button
           type="button"
           onClick={() => openSetup("people")}
