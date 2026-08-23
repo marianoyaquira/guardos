@@ -28,7 +28,7 @@ import {
 } from "@/data/operationSetup";
 import { fillAssignments } from "@/lib/fillSession";
 
-export type SetupTab = "people" | "needs" | "fill";
+export type SetupTab = "posts" | "people" | "needs" | "fill";
 
 type OperationState = {
   roster: LifeguardProfile[];
@@ -36,15 +36,11 @@ type OperationState = {
   overrides: Partial<Record<string, Record<PostId, PostAssignment>>>;
 };
 
-export type SetupFocus = "posts" | "setup";
-
 type OperationContextValue = OperationState & {
   setupOpen: boolean;
   setupTab: SetupTab;
-  setupFocus: SetupFocus;
   openSetup: (tab?: SetupTab) => void;
   openPlan: () => void;
-  focusSetup: (focus: SetupFocus) => void;
   closeSetup: () => void;
   addPerson: (input: {
     name: string;
@@ -79,8 +75,7 @@ export function OperationProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OperationState>(loadState);
   const [hydrated, setHydrated] = useState(false);
   const [setupOpen, setSetupOpen] = useState(false);
-  const [setupTab, setSetupTab] = useState<SetupTab>("people");
-  const [setupFocus, setSetupFocus] = useState<SetupFocus>("posts");
+  const [setupTab, setSetupTab] = useState<SetupTab>("posts");
 
   useEffect(() => {
     try {
@@ -118,18 +113,12 @@ export function OperationProvider({ children }: { children: ReactNode }) {
       ...state,
       setupOpen,
       setupTab,
-      setupFocus,
       openSetup(tab = "people") {
         setSetupTab(tab);
-        setSetupFocus("setup");
         setSetupOpen(true);
       },
       openPlan() {
-        setSetupFocus("posts");
-        setSetupOpen(true);
-      },
-      focusSetup(focus) {
-        setSetupFocus(focus);
+        setSetupTab("posts");
         setSetupOpen(true);
       },
       closeSetup() {
@@ -249,7 +238,7 @@ export function OperationProvider({ children }: { children: ReactNode }) {
       },
       liveSession,
     };
-  }, [setupOpen, setupTab, setupFocus, state]);
+  }, [setupOpen, setupTab, state]);
 
   return (
     <OperationContext.Provider value={value}>{children}</OperationContext.Provider>
