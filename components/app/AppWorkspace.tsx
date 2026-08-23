@@ -10,7 +10,9 @@ import { ReportsScreen } from "@/components/app/ReportsScreen";
 import { RostersScreen } from "@/components/app/RostersScreen";
 import { SettingsScreen } from "@/components/app/SettingsScreen";
 import { TeamScreen } from "@/components/app/TeamScreen";
+import { SessionSetupSlide } from "@/components/app/SessionSetupSlide";
 import { isAppView, type AppView } from "@/lib/appViews";
+import { OperationProvider } from "@/lib/operation-context";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
@@ -42,6 +44,7 @@ export function AppWorkspace({
   }
 
   return (
+    <OperationProvider>
     <div
       className={cn(
         "relative flex w-full max-w-full overflow-hidden bg-app-bg text-navy",
@@ -107,6 +110,8 @@ export function AppWorkspace({
           </div>
         )}
       </div>
+      {!embedded && <SessionSetupSlide />}
     </div>
+    </OperationProvider>
   );
 }

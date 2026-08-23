@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { AppScreenHeader } from "@/components/app/AppScreenHeader";
+import { useOperation } from "@/lib/operation-context";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
 export function SettingsScreen() {
   const { t } = useI18n();
+  const { openSetup } = useOperation();
   const [watch, setWatch] = useState(true);
   const [high, setHigh] = useState(true);
 
@@ -14,6 +16,16 @@ export function SettingsScreen() {
     <div className="min-w-0 space-y-5">
       <AppScreenHeader title={t.ui.navSettings} lead={t.app.settingsLead} />
       <div className="max-w-xl space-y-3 rounded-2xl border border-[#E6EEF2] bg-white p-5">
+        <button
+          type="button"
+          onClick={() => openSetup("people")}
+          className="flex w-full items-center justify-between rounded-xl border border-[#E6EEF2] px-3 py-3 text-left"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-navy">{t.app.setupTitle}</span>
+            <span className="mt-0.5 block text-xs text-navy/45">{t.app.setupLead}</span>
+          </span>
+        </button>
         <label className="block">
           <span className="text-[11px] font-semibold tracking-[0.08em] text-navy/40 uppercase">
             {t.app.unit}
