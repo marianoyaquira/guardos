@@ -11,6 +11,7 @@ export function MapControls({
   onFullscreen,
   expanded,
   hideFullscreen = false,
+  insetRight = false,
 }: {
   onZoomIn: () => void;
   onZoomOut: () => void;
@@ -18,13 +19,19 @@ export function MapControls({
   onFullscreen: () => void;
   expanded: boolean;
   hideFullscreen?: boolean;
+  insetRight?: boolean;
 }) {
   const { t } = useI18n();
   const buttonClass =
     "grid h-10 w-10 place-items-center bg-white text-navy/70 transition-colors hover:bg-[#F3F8FA] hover:text-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan";
 
   return (
-    <div className="absolute top-1/2 right-3 z-20 flex -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-[#E6EEF2] bg-white shadow-[0_10px_24px_rgb(7_27_51_/_0.08)]">
+    <div
+      className={cn(
+        "absolute top-1/2 z-20 flex -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-[#E6EEF2] bg-white shadow-[0_10px_24px_rgb(7_27_51_/_0.08)]",
+        insetRight ? "right-[min(19rem,calc(88%+0.75rem))]" : "right-3",
+      )}
+    >
       {!hideFullscreen && (
         <button
           type="button"

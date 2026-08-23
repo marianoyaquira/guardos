@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { PanelRight } from "lucide-react";
 import { MapControls } from "@/components/app/MapControls";
+import { MapPositionsPanel } from "@/components/app/MapPositionsPanel";
 import { PostMarker } from "@/components/app/PostMarker";
 import { PostPopover } from "@/components/app/PostPopover";
 import {
@@ -10,6 +12,11 @@ import {
   type DemoSession,
   type PostId,
 } from "@/data/demoSessions";
+import {
+  clientToMapPercent,
+  defaultPlacements,
+  type PlacementMap,
+} from "@/lib/mapPlacements";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
@@ -27,19 +34,34 @@ export function OperationalMap({
   onSelectedChange?: (id: PostId | null) => void;
 }) {
   const { t } = useI18n();
+  const layerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ id: PostId; startX: number; startY: number; moved: boolean } | null>(
+    null,
+  );
   const [zoom, setZoom] = useState(1);
   const [expanded, setExpanded] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [draggingId, setDraggingId] = useState<PostId | null>(null);
+  const [placements, setPlacements] = useState<PlacementMap>(defaultPlacements);
   const [internalSelected, setInternalSelected] = useState<PostId | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
   const selected = selectedProp !== undefined ? selectedProp : internalSelected;
+  const showPanel = !preview && size === "app";
 
   function setSelected(id: PostId | null) {
     if (selectedProp !== undefined) onSelectedChange?.(id);
     else setInternalSelected(id);
   }
 
-  const selectedPost = mapPosts.find((post) => post.id === selected);
-  const selectedAssignment = selected ? session.assignments[selected] : null;
+  const livePosts = mapPosts.map((post) => ({
+    ...post,
+    x: placements[post.id].x,
+    y: placements[post.id].y,
+  }));
+  const selectedPost = livePosts.find(
+    (post) => post.id === selected && placements[post.id].onMap,
+  );
+  const selectedAssignment = selectedPost ? session.assignments[selectedPost.id] : null;
 
   useEffect(() => {
     setSelected(null);
@@ -51,18 +73,118 @@ export function OperationalMap({
       if (event.key === "Escape") {
         setSelected(null);
         setExpanded(false);
+        setPanelOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const popoverLeft = selectedPost
-    ? 50 + (selectedPost.x - 50) * zoom
-    : 0;
-  const popoverTop = selectedPost
-    ? 50 + (selectedPost.y - 50) * zoom
-    : 0;
+  function pointOnMap(clientX: number, clientY: number) {
+    const rect = layerRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    return clientToMapPercent(clientX, clientY, rect);
+  }
+
+  function movePlacement(id: PostId, x: number, y: number, onMap = true) {
+    setPlacements((current) => ({
+      ...current,
+      [id]: { x, y, onMap },
+    }));
+  }
+
+  function finishPointerDrag() {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    setDraggingId(null);
+    return drag;
+  }
+
+  function startMarkerDrag(id: PostId, event: React.PointerEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = {
+      id,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    };
+    setDraggingId(id);
+  }
+
+  function onMarkerPointerMove(event: React.PointerEvent<HTMLButtonElement>) {
+    const drag = dragRef.current;
+    if (!drag) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && dx * dx + dy * dy < 25) return;
+    drag.moved = true;
+    const next = pointOnMap(event.clientX, event.clientY);
+    if (next) movePlacement(drag.id, next.x, next.y, true);
+  }
+
+  function onMarkerPointerUp(event: React.PointerEvent<HTMLButtonElement>) {
+    const drag = finishPointerDrag();
+    if (!drag) return;
+    if (!drag.moved) {
+      setSelected(selected === drag.id ? null : drag.id);
+    }
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      /* already released */
+    }
+  }
+
+  function startPlaceFromPanel(id: PostId, event: React.PointerEvent<HTMLLIElement>) {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = {
+      id,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false,
+    };
+    setDraggingId(id);
+  }
+
+  function onPanelPointerMove(event: React.PointerEvent<HTMLLIElement>) {
+    const drag = dragRef.current;
+    if (!drag) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.moved && dx * dx + dy * dy < 25) return;
+    drag.moved = true;
+    const next = pointOnMap(event.clientX, event.clientY);
+    if (next) movePlacement(drag.id, next.x, next.y, true);
+  }
+
+  function onPanelPointerUp() {
+    finishPointerDrag();
+  }
+
+  function removePost(id: PostId) {
+    setPlacements((current) => ({
+      ...current,
+      [id]: { ...current[id], onMap: false },
+    }));
+    if (selected === id) setSelected(null);
+  }
+
+  function addPost(id: PostId) {
+    const fallback = mapPosts.find((post) => post.id === id);
+    setPlacements((current) => ({
+      ...current,
+      [id]: {
+        x: current[id]?.x ?? fallback?.x ?? 50,
+        y: current[id]?.y ?? fallback?.y ?? 50,
+        onMap: true,
+      },
+    }));
+  }
+
+  const popoverLeft = selectedPost ? 50 + (selectedPost.x - 50) * zoom : 0;
+  const popoverTop = selectedPost ? 50 + (selectedPost.y - 50) * zoom : 0;
 
   return (
     <div
@@ -86,7 +208,11 @@ export function OperationalMap({
         onClick={() => setSelected(null)}
       >
         <div
-          className="map-motion absolute inset-0 origin-center transition-transform duration-500 ease-out"
+          ref={layerRef}
+          className={cn(
+            "map-motion absolute inset-0 origin-center",
+            draggingId ? "transition-none" : "transition-transform duration-500 ease-out",
+          )}
           style={{ transform: `scale(${zoom})` }}
         >
           {!imageFailed ? (
@@ -100,30 +226,33 @@ export function OperationalMap({
           ) : (
             <WavePoolFallback />
           )}
-          {mapPosts.map((post) => (
-            <div
-              key={post.id}
-              className="contents"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <PostMarker
-                post={post}
-                assignment={session.assignments[post.id]}
-                selected={selected === post.id}
-                zoom={zoom}
-                minutesUntilSwap={minutesUntilSwap(
-                  session,
-                  session.assignments[post.id],
-                )}
-                onSelect={(id) =>
-                  setSelected(selected === id ? null : id)
-                }
-              />
-            </div>
-          ))}
+          {livePosts
+            .filter((post) => placements[post.id].onMap)
+            .map((post) => (
+              <div
+                key={post.id}
+                className="contents"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <PostMarker
+                  post={post}
+                  assignment={session.assignments[post.id]}
+                  selected={selected === post.id}
+                  zoom={zoom}
+                  dragging={draggingId === post.id}
+                  minutesUntilSwap={minutesUntilSwap(
+                    session,
+                    session.assignments[post.id],
+                  )}
+                  onDragStart={startMarkerDrag}
+                  onDragMove={onMarkerPointerMove}
+                  onDragEnd={onMarkerPointerUp}
+                />
+              </div>
+            ))}
         </div>
 
-        {selectedPost && selectedAssignment && (
+        {selectedPost && selectedAssignment && !draggingId && (
           <div onClick={(event) => event.stopPropagation()}>
             <PostPopover
               post={selectedPost}
@@ -135,9 +264,29 @@ export function OperationalMap({
           </div>
         )}
 
+        {showPanel && (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              setPanelOpen((value) => !value);
+            }}
+            className={cn(
+              "absolute top-3 z-20 inline-flex items-center gap-1.5 rounded-xl border border-[#E6EEF2] bg-white px-2.5 py-2 text-xs font-semibold text-navy shadow-[0_8px_20px_rgb(7_27_51_/_0.08)]",
+              panelOpen ? "right-[min(19rem,calc(88%+0.75rem))]" : "right-3",
+            )}
+            aria-expanded={panelOpen}
+            aria-label={panelOpen ? t.ui.closePositions : t.ui.openPositions}
+          >
+            <PanelRight className="h-3.5 w-3.5" />
+            {t.ui.positionsPanel}
+          </button>
+        )}
+
         <MapControls
           expanded={expanded}
           hideFullscreen={preview || size === "capture"}
+          insetRight={panelOpen && showPanel}
           onFullscreen={() => {
             if (preview || size === "capture") return;
             setExpanded((value) => !value);
@@ -149,6 +298,26 @@ export function OperationalMap({
           onZoomIn={() => setZoom((value) => Math.min(1.7, Number((value + 0.15).toFixed(2))))}
           onZoomOut={() => setZoom((value) => Math.max(1, Number((value - 0.15).toFixed(2))))}
         />
+
+        {showPanel && panelOpen && (
+          <div onClick={(event) => event.stopPropagation()}>
+            <MapPositionsPanel
+              session={session}
+              posts={mapPosts}
+              placements={placements}
+              onRemove={removePost}
+              onAdd={addPost}
+              onPlaceStart={startPlaceFromPanel}
+              onPlaceMove={onPanelPointerMove}
+              onPlaceEnd={onPanelPointerUp}
+              onReset={() => {
+                setPlacements(defaultPlacements());
+                setSelected(null);
+              }}
+              onClose={() => setPanelOpen(false)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

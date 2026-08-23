@@ -11,14 +11,20 @@ export function PostMarker({
   selected,
   zoom = 1,
   minutesUntilSwap,
-  onSelect,
+  dragging = false,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
 }: {
   post: MapPost;
   assignment: PostAssignment;
   selected: boolean;
   zoom?: number;
   minutesUntilSwap: number;
-  onSelect: (id: typeof post.id) => void;
+  dragging?: boolean;
+  onDragStart: (id: typeof post.id, event: React.PointerEvent<HTMLButtonElement>) => void;
+  onDragMove: (event: React.PointerEvent<HTMLButtonElement>) => void;
+  onDragEnd: (event: React.PointerEvent<HTMLButtonElement>) => void;
 }) {
   const { t } = useI18n();
   const attention = assignment.status !== "OK";
@@ -38,13 +44,18 @@ export function PostMarker({
   return (
     <button
       type="button"
-      onClick={(event) => {
+      onPointerDown={(event) => {
         event.stopPropagation();
-        onSelect(post.id);
+        onDragStart(post.id, event);
       }}
+      onPointerMove={onDragMove}
+      onPointerUp={onDragEnd}
       aria-label={`${postLabel(post.id, t)}, ${assignment.name}, ${t.fatigue.status[assignment.status]}, ${swapSpoken}`}
       aria-pressed={selected}
-      className="absolute z-10 origin-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+      className={cn(
+        "absolute origin-center touch-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan",
+        dragging ? "z-30 cursor-grabbing" : "z-10 cursor-grab",
+      )}
       style={{
         left: `${post.x}%`,
         top: `${post.y}%`,

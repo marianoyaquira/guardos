@@ -77,6 +77,15 @@ export type Dictionary = {
     centerMap: string;
     zoomIn: string;
     zoomOut: string;
+    positionsPanel: string;
+    onTheMap: string;
+    offTheMap: string;
+    addPosition: string;
+    removePosition: string;
+    dragToPlace: string;
+    resetLayout: string;
+    openPositions: string;
+    closePositions: string;
     appHost: string;
   };
   app: {
