@@ -33,7 +33,7 @@ export function MapScreen({
   onOpenFatigue?: () => void;
 }) {
   const { t } = useI18n();
-  const { liveSession, openSetup } = useOperation();
+  const { liveSession, openPlan } = useOperation();
   const [internalId, setInternalId] = useState(defaultSessionId);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<PostId | null>(null);
@@ -91,7 +91,7 @@ export function MapScreen({
         <div className="flex min-w-0 flex-1 flex-col gap-4 p-3 md:p-4 lg:p-5">
           <SessionSummary
             session={session}
-            onEdit={embedded ? undefined : () => openSetup("people")}
+            onEdit={embedded ? undefined : () => openPlan()}
           />
 
           <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">

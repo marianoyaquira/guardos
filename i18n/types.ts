@@ -126,6 +126,16 @@ export type Dictionary = {
     neededCount: string;
     peopleCount: string;
     weekdays: Record<string, string>;
+    postsPlanTitle: string;
+    postsPlanLead: string;
+    postsToCover: string;
+    nextOnPost: string;
+    whereTheyWillBe: string;
+    nextSevenDays: string;
+    dayOff: string;
+    timeOnThisPost: string;
+    openPostsPlan: string;
+    planBack: string;
     reportsLead: string;
     fairnessHint: string;
     highPriorityCount: string;
