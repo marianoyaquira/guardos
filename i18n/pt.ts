@@ -133,6 +133,12 @@ export const pt: Dictionary = {
     reportFairness: "Carga de justiça",
     reportPositions: "Histórico de postos",
     periodToday: "Hoje",
+    highHint: "Alto — recomendar troca antes do próximo rodízio.",
+    watchHint: "Atenção — manter este rodízio em movimento.",
+    recommendSwap: "Recomendar troca",
+    zoneAvg: "Média {n} min",
+    zoneAlert: "{n} Atenção/Alto",
+    timeOnStation: "Tempo no posto",
   },
   mockup: {
     operation: "GuardOS · Operação",

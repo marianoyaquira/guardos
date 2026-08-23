@@ -103,6 +103,12 @@ export type Dictionary = {
     reportFairness: string;
     reportPositions: string;
     periodToday: string;
+    highHint: string;
+    watchHint: string;
+    recommendSwap: string;
+    zoneAvg: string;
+    zoneAlert: string;
+    timeOnStation: string;
   };
   mockup: {
     operation: string;

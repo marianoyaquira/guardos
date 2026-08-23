@@ -133,6 +133,12 @@ export const en: Dictionary = {
     reportFairness: "Fairness load",
     reportPositions: "Position history",
     periodToday: "Today",
+    highHint: "High — recommend swap before the next rotation.",
+    watchHint: "Watch — keep this rotation moving.",
+    recommendSwap: "Recommend swap",
+    zoneAvg: "Avg {n} min",
+    zoneAlert: "{n} Watch/High",
+    timeOnStation: "Time on station",
   },
   mockup: {
     operation: "GuardOS · Operations",

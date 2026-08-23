@@ -62,3 +62,32 @@ export function formatHours(totalMinutes: number) {
 export function totalMinutes(entry: FatigueEntry) {
   return Object.values(entry.minutes).reduce((sum, value) => sum + value, 0);
 }
+
+const statusRank: Record<FatigueStatus, number> = {
+  ALTO: 0,
+  ATENÇÃO: 1,
+  OK: 2,
+};
+
+export function sortByAttention(entries: FatigueEntry[]) {
+  return [...entries].sort((a, b) => {
+    const byStatus = statusRank[a.status] - statusRank[b.status];
+    if (byStatus !== 0) return byStatus;
+    return totalMinutes(b) - totalMinutes(a);
+  });
+}
+
+export function zoneRollups(entries: FatigueEntry[]) {
+  return fatigueZones.map((zone) => {
+    const minutes = entries.map((entry) => entry.minutes[zone.id]);
+    const avg = Math.round(
+      minutes.reduce((sum, value) => sum + value, 0) / entries.length,
+    );
+    const alerts = entries.filter(
+      (entry) => entry.status !== "OK" && entry.minutes[zone.id] > 0,
+    ).length;
+    return { ...zone, avg, alerts };
+  });
+}
+
+export const fatigueScaleMinutes = 240;
