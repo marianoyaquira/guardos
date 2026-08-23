@@ -51,80 +51,56 @@ export function SessionSetupSlide() {
   const needed = neededPosts(op.needs);
   const preview = fillAssignments(session, op.roster, needed);
   const available = op.roster.filter((person) => person.available);
-  const tabs: SetupTab[] = ["people", "needs", "fill"];
+  const tabs: SetupTab[] = ["posts", "people", "needs", "fill"];
 
   return (
-    <div className="fixed inset-0 z-50">
-      <button
-        type="button"
-        className="absolute inset-0 bg-navy/30"
-        aria-label={t.header.closeMenu}
-        onClick={op.closeSetup}
-      />
-      <PostsPlanSlide />
-      <aside
-        className={cn(
-          "absolute inset-y-0 right-0 flex w-full max-w-[28rem] flex-col border-l border-[#E6EEF2] bg-white shadow-[-16px_0_40px_rgb(7_27_51_/_0.1)]",
-          op.setupFocus === "posts" && "hidden lg:flex",
-        )}
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-[#E6EEF2] px-4 py-4">
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-navy">{t.app.setupTitle}</p>
-            <p className="mt-1 text-xs text-navy/50">{t.app.setupLead}</p>
-          </div>
-          <button
-            type="button"
-            onClick={op.closeSetup}
-            className="grid h-9 w-9 place-items-center rounded-lg text-navy/50 hover:bg-[#F3F8FA] hover:text-navy"
-            aria-label={t.header.closeMenu}
-          >
-            <X className="h-4 w-4" />
-          </button>
+    <div className="fixed inset-0 z-50 flex flex-col bg-white lg:left-[248px]">
+      <div className="flex items-start justify-between gap-3 border-b border-[#E6EEF2] px-4 py-4 md:px-6">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-navy">{t.app.setupTitle}</p>
+          <p className="mt-1 text-xs text-navy/50">
+            {op.setupTab === "posts" ? t.app.postsPlanLead : t.app.setupLead}
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={op.closeSetup}
+          className="grid h-9 w-9 place-items-center rounded-lg text-navy/50 hover:bg-[#F3F8FA] hover:text-navy"
+          aria-label={t.header.closeMenu}
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
 
-        <div className="flex gap-1 border-b border-[#E6EEF2] px-3 py-2 lg:hidden">
+      <div className="flex flex-wrap gap-1 border-b border-[#E6EEF2] px-3 py-2 md:px-6">
+        {tabs.map((tab) => (
           <button
+            key={tab}
             type="button"
-            onClick={() => op.focusSetup("posts")}
-            className="rounded-lg px-3 py-1.5 text-xs font-semibold text-navy/55 hover:bg-[#F3F8FA]"
+            onClick={() => op.openSetup(tab)}
+            className={cn(
+              "rounded-lg px-3 py-1.5 text-xs font-semibold",
+              op.setupTab === tab
+                ? "bg-cyan text-white"
+                : "text-navy/55 hover:bg-[#F3F8FA] hover:text-navy",
+            )}
           >
-            {t.app.openPostsPlan}
-          </button>
-          <button
-            type="button"
-            onClick={() => op.focusSetup("setup")}
-            className="rounded-lg bg-cyan px-3 py-1.5 text-xs font-semibold text-white"
-          >
-            {t.app.setupTitle}
-          </button>
-        </div>
-
-        <div className="flex gap-1 border-b border-[#E6EEF2] px-3 py-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => op.openSetup(tab)}
-              className={cn(
-                "rounded-lg px-3 py-1.5 text-xs font-semibold",
-                op.setupTab === tab
-                  ? "bg-cyan text-white"
-                  : "text-navy/55 hover:bg-[#F3F8FA] hover:text-navy",
-              )}
-            >
-              {tab === "people"
+            {tab === "posts"
+              ? t.app.postsToCover
+              : tab === "people"
                 ? t.app.tabPeople
                 : tab === "needs"
                   ? t.app.tabNeeds
                   : t.app.tabFill}
-            </button>
-          ))}
-        </div>
+          </button>
+        ))}
+      </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-6">
+        {op.setupTab === "posts" && <PostsPlanSlide />}
+
           {op.setupTab === "people" && (
-            <div className="space-y-4">
+            <div className="grid max-w-5xl gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
               <form
                 className="space-y-3 rounded-2xl border border-[#E6EEF2] p-3"
                 onSubmit={(event) => {
@@ -436,7 +412,6 @@ export function SessionSetupSlide() {
             </div>
           )}
         </div>
-      </aside>
     </div>
   );
 }
