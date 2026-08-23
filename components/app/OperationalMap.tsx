@@ -12,8 +12,6 @@ import {
 } from "@/data/demoSessions";
 import { cn } from "@/lib/cn";
 
-type ViewMode = "standard" | "satellite";
-
 export function OperationalMap({
   session,
   preview = false,
@@ -23,7 +21,6 @@ export function OperationalMap({
   preview?: boolean;
   size?: "preview" | "section" | "app";
 }) {
-  const [view, setView] = useState<ViewMode>(preview ? "satellite" : "standard");
   const [zoom, setZoom] = useState(1);
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<PostId | null>(null);
@@ -57,32 +54,6 @@ export function OperationalMap({
         expanded && "fixed inset-3 z-50 rounded-3xl shadow-2xl",
       )}
     >
-      <div className="absolute top-3 left-3 z-20 rounded-xl border border-[#E6EEF2] bg-white/95 px-3 py-2 shadow-[0_8px_20px_rgb(7_27_51_/_0.06)] backdrop-blur-sm">
-        <p className="text-[11px] font-medium text-navy/45">Visão do mapa</p>
-        <div className="mt-1.5 inline-flex rounded-lg bg-[#F3F8FA] p-0.5">
-          <button
-            type="button"
-            onClick={() => setView("standard")}
-            className={cn(
-              "rounded-md px-2.5 py-1 text-[11px] font-semibold",
-              view === "standard" ? "bg-cyan text-white" : "text-navy/55",
-            )}
-          >
-            Padrão
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("satellite")}
-            className={cn(
-              "rounded-md px-2.5 py-1 text-[11px] font-semibold",
-              view === "satellite" ? "bg-cyan text-white" : "text-navy/55",
-            )}
-          >
-            Satélite
-          </button>
-        </div>
-      </div>
-
       <div
         className={cn(
           "relative overflow-hidden bg-[#d7e8ea]",
@@ -102,11 +73,7 @@ export function OperationalMap({
             <img
               src="/guardos/wave-pool-map.jpg"
               alt="Mapa operacional da piscina de ondas"
-              className={cn(
-                "h-full w-full object-cover object-center",
-                view === "standard" && "saturate-[0.92] contrast-[0.98]",
-                view === "satellite" && "saturate-125 contrast-110",
-              )}
+              className="h-full w-full object-cover object-center"
               onError={() => setImageFailed(true)}
             />
           ) : (
