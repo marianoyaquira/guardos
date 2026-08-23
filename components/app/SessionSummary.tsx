@@ -7,7 +7,13 @@ import { teamLabel } from "@/lib/localizeDemo";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
-export function SessionSummary({ session }: { session: DemoSession }) {
+export function SessionSummary({
+  session,
+  onEdit,
+}: {
+  session: DemoSession;
+  onEdit?: () => void;
+}) {
   const { t } = useI18n();
   const coverage = coveragePercent(session);
 
@@ -67,6 +73,7 @@ export function SessionSummary({ session }: { session: DemoSession }) {
         </button>
         <button
           type="button"
+          onClick={onEdit}
           className="inline-flex h-11 items-center rounded-xl bg-cyan px-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgb(7_156_179_/_0.22)] transition-all duration-200 hover:-translate-y-px hover:bg-cyan-deep"
         >
           {t.ui.editRoster}

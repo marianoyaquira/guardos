@@ -15,6 +15,7 @@ import {
   postIdForInitials,
   type PostId,
 } from "@/data/demoSessions";
+import { useOperation } from "@/lib/operation-context";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 
@@ -32,12 +33,14 @@ export function MapScreen({
   onOpenFatigue?: () => void;
 }) {
   const { t } = useI18n();
+  const { liveSession, openSetup } = useOperation();
   const [internalId, setInternalId] = useState(defaultSessionId);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<PostId | null>(null);
   const sessionId = controlledId ?? internalId;
-  const session =
-    demoSessions.find((item) => item.id === sessionId) ?? demoSessions[1];
+  const session = liveSession(
+    demoSessions.find((item) => item.id === sessionId) ?? demoSessions[1],
+  );
 
   function changeSession(id: string) {
     onSessionChange?.(id);
@@ -86,7 +89,10 @@ export function MapScreen({
         )}
 
         <div className="flex min-w-0 flex-1 flex-col gap-4 p-3 md:p-4 lg:p-5">
-          <SessionSummary session={session} />
+          <SessionSummary
+            session={session}
+            onEdit={embedded ? undefined : () => openSetup("people")}
+          />
 
           <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
             <div className="min-w-0">

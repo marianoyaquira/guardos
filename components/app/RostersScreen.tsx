@@ -13,6 +13,7 @@ import {
   sortRosterByAttention,
 } from "@/data/demoSessions";
 import { postLabel } from "@/lib/localizeDemo";
+import { useOperation } from "@/lib/operation-context";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
 import type { FatigueStatus } from "@/data/demoFatigueData";
@@ -25,8 +26,11 @@ const barTone: Record<FatigueStatus, string> = {
 
 export function RostersScreen() {
   const { t } = useI18n();
+  const { liveSession } = useOperation();
   const [sessionId, setSessionId] = useState(defaultSessionId);
-  const session = demoSessions.find((item) => item.id === sessionId) ?? demoSessions[1];
+  const session = liveSession(
+    demoSessions.find((item) => item.id === sessionId) ?? demoSessions[1],
+  );
   const rows = sortRosterByAttention(mapPosts, session.assignments);
   const rollup = rosterRollup(session.assignments);
   const thresholdPct = (rotationThresholdMinutes / rotationScaleMinutes) * 100;
