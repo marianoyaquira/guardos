@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { ChevronLeft } from "lucide-react";
 import { MapStatusPill } from "@/components/app/MapStatusPill";
+import { PostPlaceIcon } from "@/components/app/PostPlaceIcon";
 import { demoSessions, type PostId } from "@/data/demoSessions";
 import { neededPosts } from "@/data/operationSetup";
 import { useOperation } from "@/lib/operation-context";
@@ -71,18 +72,7 @@ export function PostsPlanSlide() {
                       onClick={() => selectPost(id)}
                       className="flex w-full items-center gap-3 rounded-xl border border-[#E6EEF2] px-3 py-2.5 text-left hover:border-cyan/40"
                     >
-                      {current ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={current.photo}
-                          alt={current.name}
-                          className="h-8 w-8 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="grid h-8 w-8 place-items-center rounded-full bg-navy/8 text-[10px] text-navy/35">
-                          —
-                        </span>
-                      )}
+                      <PostPlaceIcon id={id} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-semibold text-navy">
                           {postLabel(id, t)}
