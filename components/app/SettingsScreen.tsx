@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AppScreenHeader } from "@/components/app/AppScreenHeader";
+import { useAppNav } from "@/lib/app-nav";
 import { useOperation } from "@/lib/operation-context";
 import { useI18n } from "@/lib/i18n-context";
 import { cn } from "@/lib/cn";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/cn";
 export function SettingsScreen() {
   const { t } = useI18n();
   const { openSetup, openPlan } = useOperation();
+  const openView = useAppNav();
   const [watch, setWatch] = useState(true);
   const [high, setHigh] = useState(true);
 
@@ -18,7 +20,10 @@ export function SettingsScreen() {
       <div className="max-w-xl space-y-3 rounded-2xl border border-[#E6EEF2] bg-white p-5">
         <button
           type="button"
-          onClick={() => openPlan()}
+          onClick={() => {
+            openPlan();
+            openView("sessao");
+          }}
           className="flex w-full items-center justify-between rounded-xl border border-[#E6EEF2] px-3 py-3 text-left"
         >
           <span>
@@ -28,7 +33,10 @@ export function SettingsScreen() {
         </button>
         <button
           type="button"
-          onClick={() => openSetup("people")}
+          onClick={() => {
+            openSetup("people");
+            openView("sessao");
+          }}
           className="flex w-full items-center justify-between rounded-xl border border-[#E6EEF2] px-3 py-3 text-left"
         >
           <span>

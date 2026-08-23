@@ -12,6 +12,7 @@ import { SettingsScreen } from "@/components/app/SettingsScreen";
 import { TeamScreen } from "@/components/app/TeamScreen";
 import { SessionSetupSlide } from "@/components/app/SessionSetupSlide";
 import { isAppView, type AppView } from "@/lib/appViews";
+import { AppNavProvider } from "@/lib/app-nav";
 import { OperationProvider } from "@/lib/operation-context";
 import { cn } from "@/lib/cn";
 
@@ -43,6 +44,7 @@ export function AppWorkspace({
 
   return (
     <OperationProvider>
+    <AppNavProvider openView={openView}>
     <div
       className={cn(
         "relative flex w-full max-w-full overflow-hidden bg-app-bg text-navy",
@@ -78,6 +80,7 @@ export function AppWorkspace({
           />
         ) : (
           <div className="min-w-0 flex-1 overflow-y-auto p-3 md:p-4 lg:p-5">
+            {view === "sessao" && <SessionSetupSlide />}
             {view === "escalas" && <RostersScreen />}
             {view === "fadiga" && <FatigueScreen />}
             {view === "equipe" && <TeamScreen />}
@@ -96,8 +99,8 @@ export function AppWorkspace({
           hideLogout={embedded}
         />
       )}
-      {!embedded && <SessionSetupSlide />}
     </div>
+    </AppNavProvider>
     </OperationProvider>
   );
 }

@@ -2,6 +2,7 @@
 
 import { AppScreenHeader } from "@/components/app/AppScreenHeader";
 import { defaultSessionId, demoSessions, mapPosts } from "@/data/demoSessions";
+import { useAppNav } from "@/lib/app-nav";
 import { useOperation } from "@/lib/operation-context";
 import { postLabel } from "@/lib/localizeDemo";
 import { useI18n } from "@/lib/i18n-context";
@@ -9,6 +10,7 @@ import { useI18n } from "@/lib/i18n-context";
 export function TeamScreen() {
   const { t } = useI18n();
   const { roster, liveSession, openSetup } = useOperation();
+  const openView = useAppNav();
   const session = liveSession(
     demoSessions.find((item) => item.id === defaultSessionId) ?? demoSessions[1],
   );
@@ -22,7 +24,10 @@ export function TeamScreen() {
         <AppScreenHeader title={t.ui.navTeam} lead={t.app.teamLead} />
         <button
           type="button"
-          onClick={() => openSetup("people")}
+          onClick={() => {
+            openSetup("people");
+            openView("sessao");
+          }}
           className="mt-1 shrink-0 rounded-xl bg-cyan px-3 py-2 text-xs font-semibold text-white"
         >
           {t.app.addPerson}

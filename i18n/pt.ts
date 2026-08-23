@@ -69,6 +69,7 @@ export const pt: Dictionary = {
     lunch: "Almoço",
     minutes: "min",
     navMap: "Mapa",
+    navSession: "Sessão",
     navRosters: "Escalas",
     navFatigue: "Fadiga",
     navTeam: "Equipe",

@@ -9,10 +9,8 @@ import { cn } from "@/lib/cn";
 
 export function SessionSummary({
   session,
-  onEdit,
 }: {
   session: DemoSession;
-  onEdit?: () => void;
 }) {
   const { t } = useI18n();
   const coverage = coveragePercent(session);
@@ -70,13 +68,6 @@ export function SessionSummary({
           <span className="absolute top-2 right-2 grid h-4 min-w-4 place-items-center rounded-full bg-[#E11D48] px-1 text-[9px] font-semibold text-white">
             2
           </span>
-        </button>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="inline-flex h-11 items-center rounded-xl bg-cyan px-4 text-sm font-semibold text-white shadow-[0_8px_20px_rgb(7_156_179_/_0.22)] transition-all duration-200 hover:-translate-y-px hover:bg-cyan-deep"
-        >
-          {t.ui.editRoster}
         </button>
         <button
           type="button"

@@ -69,6 +69,7 @@ export const en: Dictionary = {
     lunch: "Lunch",
     minutes: "min",
     navMap: "Map",
+    navSession: "Session",
     navRosters: "Rosters",
     navFatigue: "Fatigue",
     navTeam: "Team",

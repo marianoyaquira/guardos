@@ -8,6 +8,7 @@ import {
   Settings,
   Shield,
   Users,
+  CalendarClock,
   CalendarRange,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
@@ -30,6 +31,7 @@ export function GuardOSSidebar({
   const { t } = useI18n();
   const items: { id: AppView; label: string; icon: typeof Map }[] = [
     { id: "mapa", label: t.ui.navMap, icon: Map },
+    { id: "sessao", label: t.ui.navSession, icon: CalendarClock },
     { id: "escalas", label: t.ui.navRosters, icon: CalendarRange },
     { id: "fadiga", label: t.ui.navFatigue, icon: Shield },
     { id: "equipe", label: t.ui.navTeam, icon: Users },

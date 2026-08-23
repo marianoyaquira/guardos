@@ -2,6 +2,7 @@
 
 import {
   Boxes,
+  CalendarClock,
   CalendarRange,
   ClipboardList,
   LogOut,
@@ -22,6 +23,7 @@ const primary = [
 ];
 
 const extra = [
+  { id: "sessao" as const, icon: CalendarClock },
   { id: "equipe" as const, icon: Users },
   { id: "relatorios" as const, icon: ClipboardList },
   { id: "estoque" as const, icon: Boxes },
@@ -46,6 +48,7 @@ export function GuardOSTabBar({
   const { t } = useI18n();
   const labels: Record<AppView, string> = {
     mapa: t.ui.navMap,
+    sessao: t.ui.navSession,
     escalas: t.ui.navRosters,
     fadiga: t.ui.navFatigue,
     equipe: t.ui.navTeam,
