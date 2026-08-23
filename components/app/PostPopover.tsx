@@ -1,23 +1,37 @@
 "use client";
 
 import { MapStatusPill } from "@/components/app/MapStatusPill";
-import type { MapPost, PostAssignment } from "@/data/demoSessions";
+import {
+  minutesUntilSwap,
+  type DemoSession,
+  type MapPost,
+  type PostAssignment,
+} from "@/data/demoSessions";
 import { postLabel } from "@/lib/localizeDemo";
 import { useI18n } from "@/lib/i18n-context";
 
 export function PostPopover({
   post,
   assignment,
+  session,
   left,
   top,
 }: {
   post: MapPost;
   assignment: PostAssignment;
+  session: DemoSession;
   left?: number;
   top?: number;
 }) {
   const { t } = useI18n();
   const label = postLabel(post.id, t);
+  const until = minutesUntilSwap(session, assignment);
+  const swapCopy =
+    until < 0
+      ? t.ui.swapOverdue.replace("{n}", String(Math.abs(until)))
+      : until === 0
+        ? t.ui.swapNow
+        : t.ui.nextSwapIn.replace("{n}", String(until));
   const x = left ?? post.x;
   const y = top ?? post.y;
 
@@ -63,7 +77,10 @@ export function PostPopover({
         </div>
         <div className="flex justify-between gap-3">
           <dt>{t.ui.nextSwap}</dt>
-          <dd className="tabular font-medium text-navy">{assignment.nextSwap}</dd>
+          <dd className="text-right">
+            <span className="block tabular font-medium text-navy">{swapCopy}</span>
+            <span className="tabular text-[10px] text-navy/40">{assignment.nextSwap}</span>
+          </dd>
         </div>
       </dl>
     </div>

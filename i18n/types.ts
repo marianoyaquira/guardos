@@ -37,6 +37,11 @@ export type Dictionary = {
     pinWatch: string;
     timeOnPost: string;
     nextSwap: string;
+    nextSwapIn: string;
+    nextSwapPin: string;
+    swapNow: string;
+    swapOverdue: string;
+    swapOverduePin: string;
     session: string;
     teamA: string;
     teamB: string;
@@ -81,6 +86,8 @@ export type Dictionary = {
     onPost: string;
     offWater: string;
     rostersLead: string;
+    rotationThreshold: string;
+    pastThreshold: string;
     post: string;
     fatigueLead: string;
     exposureByZone: string;

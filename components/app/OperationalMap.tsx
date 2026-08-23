@@ -6,6 +6,7 @@ import { PostMarker } from "@/components/app/PostMarker";
 import { PostPopover } from "@/components/app/PostPopover";
 import {
   mapPosts,
+  minutesUntilSwap,
   type DemoSession,
   type PostId,
 } from "@/data/demoSessions";
@@ -110,6 +111,10 @@ export function OperationalMap({
                 assignment={session.assignments[post.id]}
                 selected={selected === post.id}
                 zoom={zoom}
+                minutesUntilSwap={minutesUntilSwap(
+                  session,
+                  session.assignments[post.id],
+                )}
                 onSelect={(id) =>
                   setSelected(selected === id ? null : id)
                 }
@@ -123,6 +128,7 @@ export function OperationalMap({
             <PostPopover
               post={selectedPost}
               assignment={selectedAssignment}
+              session={session}
               left={popoverLeft}
               top={popoverTop}
             />

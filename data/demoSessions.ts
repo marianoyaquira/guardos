@@ -286,6 +286,61 @@ export const demoSessions: DemoSession[] = [
 
 export const defaultSessionId = "s02";
 
+export const rotationThresholdMinutes = 30;
+export const rotationScaleMinutes = 60;
+
+const rosterStatusRank: Record<FatigueStatus, number> = {
+  ALTO: 0,
+  ATENÇÃO: 1,
+  OK: 2,
+};
+
+export function sortRosterByAttention(
+  posts: MapPost[],
+  assignments: Record<PostId, PostAssignment>,
+) {
+  return [...posts].sort((a, b) => {
+    const left = assignments[a.id];
+    const right = assignments[b.id];
+    const byStatus = rosterStatusRank[left.status] - rosterStatusRank[right.status];
+    if (byStatus !== 0) return byStatus;
+    return right.minutesOnPost - left.minutesOnPost;
+  });
+}
+
+export function rosterRollup(assignments: Record<PostId, PostAssignment>) {
+  const rows = Object.values(assignments);
+  const avg = Math.round(
+    rows.reduce((sum, row) => sum + row.minutesOnPost, 0) / rows.length,
+  );
+  const alerts = rows.filter((row) => row.status !== "OK").length;
+  const overdue = rows.filter(
+    (row) => row.minutesOnPost > rotationThresholdMinutes,
+  ).length;
+  return { avg, alerts, overdue };
+}
+
 export function coveragePercent(session: DemoSession) {
   return Math.round((session.coveredPosts / session.totalPosts) * 100);
+}
+
+function parseClockMinutes(value: string) {
+  const [hours, minutes] = value.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+/** Demo "now" from this snapshot: session start + median time-on-post. */
+export function sessionClockMinutes(session: DemoSession) {
+  const times = Object.values(session.assignments)
+    .map((row) => row.minutesOnPost)
+    .sort((a, b) => a - b);
+  const median = times[Math.floor(times.length / 2)];
+  return parseClockMinutes(session.startTime) + median;
+}
+
+export function minutesUntilSwap(
+  session: DemoSession,
+  assignment: PostAssignment,
+) {
+  return parseClockMinutes(assignment.nextSwap) - sessionClockMinutes(session);
 }

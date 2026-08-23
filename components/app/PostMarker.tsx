@@ -10,16 +10,30 @@ export function PostMarker({
   assignment,
   selected,
   zoom = 1,
+  minutesUntilSwap,
   onSelect,
 }: {
   post: MapPost;
   assignment: PostAssignment;
   selected: boolean;
   zoom?: number;
+  minutesUntilSwap: number;
   onSelect: (id: typeof post.id) => void;
 }) {
   const { t } = useI18n();
   const attention = assignment.status !== "OK";
+  const overdue = minutesUntilSwap < 0;
+  const dueNow = minutesUntilSwap === 0;
+  const swapLabel = overdue
+    ? t.ui.swapOverduePin.replace("{n}", String(Math.abs(minutesUntilSwap)))
+    : dueNow
+      ? t.ui.swapNow
+      : t.ui.nextSwapPin.replace("{n}", String(minutesUntilSwap));
+  const swapSpoken = overdue
+    ? t.ui.swapOverdue.replace("{n}", String(Math.abs(minutesUntilSwap)))
+    : dueNow
+      ? t.ui.swapNow
+      : t.ui.nextSwapIn.replace("{n}", String(minutesUntilSwap));
 
   return (
     <button
@@ -28,7 +42,7 @@ export function PostMarker({
         event.stopPropagation();
         onSelect(post.id);
       }}
-      aria-label={`${postLabel(post.id, t)}, ${assignment.name}, ${t.fatigue.status[assignment.status]}`}
+      aria-label={`${postLabel(post.id, t)}, ${assignment.name}, ${t.fatigue.status[assignment.status]}, ${swapSpoken}`}
       aria-pressed={selected}
       className="absolute z-10 origin-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
       style={{
@@ -39,13 +53,13 @@ export function PostMarker({
     >
       <span
         className={cn(
-          "flex flex-col items-center transition-transform duration-200",
+          "relative flex transition-transform duration-200",
           selected ? "scale-110" : "hover:scale-105",
         )}
       >
         <span
           className={cn(
-            "grid h-8 min-w-8 place-items-center rounded-full px-1.5 text-[10px] font-semibold text-white shadow-[0_6px_16px_rgb(7_27_51_/_0.18)]",
+            "absolute bottom-full left-1/2 z-10 mb-0.5 -translate-x-1/2 grid h-8 min-w-8 place-items-center rounded-full px-1.5 text-[10px] font-semibold text-white shadow-[0_6px_16px_rgb(7_27_51_/_0.18)]",
             attention && !selected ? "bg-[#D97706]" : "bg-cyan",
             selected && "ring-4 ring-cyan/30",
           )}
@@ -54,7 +68,7 @@ export function PostMarker({
         </span>
         <span
           className={cn(
-            "-mt-1 overflow-hidden rounded-full bg-navy shadow-[0_4px_12px_rgb(7_27_51_/_0.16)]",
+            "overflow-hidden rounded-full bg-navy shadow-[0_4px_12px_rgb(7_27_51_/_0.16)]",
             selected && "ring-2 ring-white",
           )}
         >
@@ -66,6 +80,18 @@ export function PostMarker({
             height={32}
             className="h-8 w-8 object-cover"
           />
+        </span>
+        <span
+          className={cn(
+            "absolute top-full left-1/2 mt-0.5 -translate-x-1/2 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[9px] font-semibold leading-none shadow-[0_4px_10px_rgb(7_27_51_/_0.12)]",
+            overdue || assignment.status === "ALTO"
+              ? "bg-[#C24141] text-white"
+              : assignment.status === "ATENÇÃO"
+                ? "bg-[#D97706] text-white"
+                : "border border-[#E6EEF2] bg-white text-navy",
+          )}
+        >
+          {swapLabel}
         </span>
       </span>
     </button>
