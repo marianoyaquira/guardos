@@ -57,6 +57,7 @@ export type Dictionary = {
     navReports: string;
     navInventory: string;
     navSettings: string;
+    navMore: string;
     productTagline: string;
     logout: string;
     supervisor: string;

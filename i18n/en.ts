@@ -75,6 +75,7 @@ export const en: Dictionary = {
     navReports: "Reports",
     navInventory: "Inventory",
     navSettings: "Settings",
+    navMore: "More",
     productTagline: "The Guard Operational System",
     logout: "Log out",
     supervisor: "Supervisor",
