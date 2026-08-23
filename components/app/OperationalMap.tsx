@@ -14,8 +14,16 @@ import { cn } from "@/lib/cn";
 
 type ViewMode = "standard" | "satellite";
 
-export function OperationalMap({ session }: { session: DemoSession }) {
-  const [view, setView] = useState<ViewMode>("standard");
+export function OperationalMap({
+  session,
+  preview = false,
+  size = "app",
+}: {
+  session: DemoSession;
+  preview?: boolean;
+  size?: "preview" | "section" | "app";
+}) {
+  const [view, setView] = useState<ViewMode>(preview ? "satellite" : "standard");
   const [zoom, setZoom] = useState(1);
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<PostId | null>(null);
@@ -42,7 +50,10 @@ export function OperationalMap({ session }: { session: DemoSession }) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white shadow-[0_8px_24px_rgb(7_27_51_/_0.03)]",
+        "relative overflow-hidden bg-white",
+        preview
+          ? "rounded-xl border border-[#E6EEF2]"
+          : "rounded-2xl border border-[#E6EEF2] shadow-[0_8px_24px_rgb(7_27_51_/_0.03)]",
         expanded && "fixed inset-3 z-50 rounded-3xl shadow-2xl",
       )}
     >
@@ -73,7 +84,13 @@ export function OperationalMap({ session }: { session: DemoSession }) {
       </div>
 
       <div
-        className="relative h-[min(68vh,720px)] min-h-[420px] overflow-hidden bg-[#d7e8ea]"
+        className={cn(
+          "relative overflow-hidden bg-[#d7e8ea]",
+          (preview || size === "preview") &&
+            "aspect-[16/10] min-h-[220px] sm:min-h-[260px]",
+          size === "section" && "h-[min(52vh,520px)] min-h-[320px]",
+          !preview && size === "app" && "h-[min(68vh,720px)] min-h-[420px]",
+        )}
         onClick={() => setSelected(null)}
       >
         <div
@@ -121,10 +138,14 @@ export function OperationalMap({ session }: { session: DemoSession }) {
           )}
         </div>
 
-        <PostLegend />
+        {!preview && <PostLegend />}
         <MapControls
           expanded={expanded}
-          onFullscreen={() => setExpanded((value) => !value)}
+          hideFullscreen={preview}
+          onFullscreen={() => {
+            if (preview) return;
+            setExpanded((value) => !value);
+          }}
           onCenter={() => {
             setZoom(1);
             setSelected(null);

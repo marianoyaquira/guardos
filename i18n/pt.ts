@@ -17,6 +17,7 @@ export const pt: Dictionary = {
   ],
   header: {
     cta: "Agendar demonstração",
+    tryApp: "Testar o app",
     openMenu: "Abrir menu",
     closeMenu: "Fechar menu",
   },
@@ -29,7 +30,7 @@ export const pt: Dictionary = {
     tracking:
       "Saiba exatamente onde está cada guarda-vidas — agora, no histórico e na escala futura.",
     cta: "Agendar demonstração",
-    secondary: "Ver como funciona",
+    secondary: "Testar o app",
     imageAlt: "Guarda-vidas observando uma piscina de ondas em operação",
     signals: [
       "Rodízio",
@@ -299,6 +300,7 @@ export const pt: Dictionary = {
       },
     ],
     button: "Agendar demonstração",
+    tryApp: "Testar o app",
     name: "Nome",
     email: "E-mail",
     park: "Parque / unidade",

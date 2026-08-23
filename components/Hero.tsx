@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   Activity,
   CalendarRange,
@@ -20,21 +19,8 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="relative overflow-hidden pt-[72px]">
-      <div className="absolute inset-0 hidden md:block">
-        <Image
-          src="/images/hero-wave-pool.jpg"
-          alt={t.hero.imageAlt}
-          fill
-          priority
-          className="object-cover object-[68%_40%]"
-          sizes="100vw"
-        />
-        <div className="photo-wash absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-white/20" />
-      </div>
-
-      <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:px-8 lg:py-20">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#f3fafb_0%,#ffffff_42%)] pt-[72px]">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:px-8 lg:py-20">
         <div>
           <p className="kicker inline-flex items-center gap-2 text-cyan-deep">
             <span className="h-1.5 w-1.5 rounded-full bg-ok" />
@@ -51,9 +37,11 @@ export function Hero() {
             {t.hero.tracking}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <CtaButton href={site.ctaHref}>{t.hero.cta}</CtaButton>
-            <CtaButton href={site.demoHref} variant="secondary" icon="play">
+            <CtaButton href={site.appHref} icon="play">
               {t.hero.secondary}
+            </CtaButton>
+            <CtaButton href={site.ctaHref} variant="secondary">
+              {t.hero.cta}
             </CtaButton>
           </div>
           <ul className="mt-8 flex flex-wrap gap-2">
@@ -70,17 +58,6 @@ export function Hero() {
               );
             })}
           </ul>
-        </div>
-
-        <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] md:hidden">
-          <Image
-            src="/images/hero-wave-pool.jpg"
-            alt={t.hero.imageAlt}
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="100vw"
-          />
         </div>
 
         <div className="pb-4 sm:pb-10 lg:col-start-2">

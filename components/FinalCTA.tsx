@@ -61,11 +61,17 @@ export function FinalCTA() {
         </ol>
 
         <div className="mt-10 max-w-xl">
-          <CtaButton
-            href={`mailto:${site.contact.email}?subject=${encodeURIComponent(t.cta.mailSubject)}`}
-          >
-            {t.cta.button}
-          </CtaButton>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <CtaButton href={site.appHref} icon="play">
+              {t.cta.tryApp}
+            </CtaButton>
+            <CtaButton
+              href={`mailto:${site.contact.email}?subject=${encodeURIComponent(t.cta.mailSubject)}`}
+              variant="ghost"
+            >
+              {t.cta.button}
+            </CtaButton>
+          </div>
           <form onSubmit={onSubmit} className="mt-8 grid gap-3 sm:grid-cols-2">
             <label className="block text-sm">
               <span className="mb-1.5 block text-white/55">{t.cta.name}</span>

@@ -4,7 +4,7 @@ export type Dictionary = {
   meta: { title: string; description: string };
   brand: { tagline: string };
   nav: { href: string; label: string }[];
-  header: { cta: string; openMenu: string; closeMenu: string };
+  header: { cta: string; tryApp: string; openMenu: string; closeMenu: string };
   lang: { pt: string; en: string };
   hero: {
     eyebrow: string;
@@ -119,6 +119,7 @@ export type Dictionary = {
     title: string;
     steps: { title: string; body: string }[];
     button: string;
+    tryApp: string;
     name: string;
     email: string;
     park: string;

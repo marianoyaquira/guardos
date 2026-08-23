@@ -52,6 +52,14 @@ export function Header() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitch />
+          <CtaButton
+            href={site.appHref}
+            variant="secondary"
+            icon="play"
+            className="min-h-10 px-4 text-sm"
+          >
+            {t.header.tryApp}
+          </CtaButton>
           <CtaButton href={site.ctaHref} className="min-h-10 px-4 text-sm">
             {t.header.cta}
           </CtaButton>
@@ -83,7 +91,10 @@ export function Header() {
               </a>
             ))}
           </nav>
-          <CtaButton href={site.ctaHref} className="mt-4 w-full">
+          <CtaButton href={site.appHref} icon="play" className="mt-4 w-full">
+            {t.header.tryApp}
+          </CtaButton>
+          <CtaButton href={site.ctaHref} variant="secondary" className="mt-3 w-full">
             {t.header.cta}
           </CtaButton>
         </div>

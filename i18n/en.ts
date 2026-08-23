@@ -17,6 +17,7 @@ export const en: Dictionary = {
   ],
   header: {
     cta: "Book a demo",
+    tryApp: "Try the app",
     openMenu: "Open menu",
     closeMenu: "Close menu",
   },
@@ -29,7 +30,7 @@ export const en: Dictionary = {
     tracking:
       "Know exactly where every lifeguard is — now, in history, and on the next roster.",
     cta: "Book a demo",
-    secondary: "See how it works",
+    secondary: "Try the app",
     imageAlt: "Lifeguard observing a wave pool in operation",
     signals: [
       "Rotation",
@@ -292,6 +293,7 @@ export const en: Dictionary = {
       },
     ],
     button: "Book a demo",
+    tryApp: "Try the app",
     name: "Name",
     email: "Email",
     park: "Park / unit",

@@ -11,6 +11,7 @@ export const site = {
   },
   ctaHref: "#contato",
   demoHref: "#solucao",
+  appHref: "/app",
 } as const;
 
 export const nav = [
