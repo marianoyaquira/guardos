@@ -63,3 +63,21 @@ export const fairnessTeamAverage = {
   guidePercent: 11,
   rotationIndex: 80,
 };
+
+export const fairnessIndexScale = 100;
+
+export function sortFairnessByPriority(entries: FairnessEntry[]) {
+  return [...entries].sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority === "ALTA" ? -1 : 1;
+    return a.rank - b.rank;
+  });
+}
+
+export function fairnessRollup(entries: FairnessEntry[]) {
+  return {
+    high: entries.filter((entry) => entry.priority === "ALTA").length,
+    avgShifts: fairnessTeamAverage.shifts,
+    avgIndex: fairnessTeamAverage.rotationIndex,
+    avgLead: fairnessTeamAverage.guidePercent,
+  };
+}

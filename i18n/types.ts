@@ -93,6 +93,10 @@ export type Dictionary = {
     exposureByZone: string;
     teamLead: string;
     reportsLead: string;
+    fairnessHint: string;
+    highPriorityCount: string;
+    teamAvgIndex: string;
+    todayRecord: string;
     export: string;
     inventoryLead: string;
     item: string;
