@@ -204,6 +204,16 @@ body {
   animation: live-pulse 1.6s ease-in-out infinite;
 }
 
+.g-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: #eef3f6;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

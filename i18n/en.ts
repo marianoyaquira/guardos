@@ -411,6 +411,7 @@ export const en: Dictionary = {
     imageAlt: "Pedro coordinating the lifeguard operation at Surfland Brasil",
     operatorsLabel: "In operation",
     pendingOperator: "Next operator",
+    comingSoon: "Coming soon",
     pendingVoice: "Next testimonial",
     readFull: "Read the full note",
   },

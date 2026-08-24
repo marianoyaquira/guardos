@@ -418,6 +418,7 @@ export const pt: Dictionary = {
     imageAlt: "Pedro na operação de guarda-vidas do Surfland Brasil",
     operatorsLabel: "Em operação",
     pendingOperator: "Próximo operador",
+    comingSoon: "Em breve",
     pendingVoice: "Próximo depoimento",
     readFull: "Ler o depoimento completo",
   },

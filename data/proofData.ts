@@ -2,6 +2,8 @@ export type OperatorMark = {
   id: string;
   name: string;
   logoSrc?: string;
+  href?: string;
+  comingSoon?: boolean;
 };
 
 export type PendingSlot = {
@@ -24,7 +26,12 @@ export const proofData = {
 
 export const operators: Array<OperatorMark | PendingSlot> = [
   { id: "surfland", name: "Surfland Brasil" },
-  { id: "operator-2", pending: true },
+  {
+    id: "garopaba",
+    name: "Garopaba",
+    href: "/app/garopaba",
+    comingSoon: true,
+  },
   { id: "operator-3", pending: true },
   { id: "operator-4", pending: true },
 ];

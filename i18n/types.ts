@@ -263,6 +263,7 @@ export type Dictionary = {
     imageAlt: string;
     operatorsLabel: string;
     pendingOperator: string;
+    comingSoon: string;
     pendingVoice: string;
     readFull: string;
   };
