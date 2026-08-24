@@ -56,6 +56,20 @@ export function ProofStrip() {
                     aria-label={t.proof.pendingOperator}
                   />
                 </li>
+              ) : item.comingSoon && item.href ? (
+                <li key={item.id}>
+                  <a
+                    href={item.href}
+                    className="flex h-8 items-center rounded-sm border border-dashed border-navy/20 px-2.5 text-navy/70 transition-colors hover:border-cyan/40 hover:text-navy"
+                  >
+                    <span className="text-[9px] font-semibold tracking-[0.08em] uppercase">
+                      {t.proof.comingSoon}
+                    </span>
+                    <span className="ml-1.5 text-[12px] font-semibold tracking-[-0.02em] text-navy">
+                      {item.name}
+                    </span>
+                  </a>
+                </li>
               ) : (
                 <li
                   key={item.id}
