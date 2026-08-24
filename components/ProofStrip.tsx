@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { comingSoonOperators, isPending, operators, voices } from "@/data/proofData";
+import {
+  comingSoonOperators,
+  isPending,
+  operators,
+  voices,
+  type OperatorMark,
+} from "@/data/proofData";
 import { useI18n } from "@/lib/i18n-context";
 
 export function ProofStrip() {
@@ -48,7 +54,9 @@ export function ProofStrip() {
             {t.proof.operatorsLabel}
           </p>
           <ul className="mt-2.5 flex flex-wrap items-center gap-2">
-            {operators.filter((item) => !isPending(item)).map((item) => (
+            {operators
+              .filter((item): item is OperatorMark => !isPending(item))
+              .map((item) => (
               <li
                 key={item.id}
                 className="h-8 rounded-sm border border-navy/10 bg-[#f4f2ee] px-2.5 text-[12px] leading-8 font-semibold tracking-[-0.02em] text-navy"

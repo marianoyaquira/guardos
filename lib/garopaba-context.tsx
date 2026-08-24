@@ -149,8 +149,8 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
             ...parsed,
             people,
             inventory: (parsed.inventory ?? seed.inventory).map((item) => ({
-              quantity: 1,
               ...item,
+              quantity: item.quantity ?? 1,
             })),
             dayPatches: parsed.dayPatches ?? {},
           };
