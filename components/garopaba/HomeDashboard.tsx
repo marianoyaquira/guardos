@@ -41,7 +41,7 @@ export function HomeDashboard({
   const hero = beachPhoto("ferrugem");
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 max-w-full space-y-5">
       <section className="relative overflow-hidden rounded-[1.75rem] bg-[#1A3A4A] text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -111,7 +111,7 @@ export function HomeDashboard({
             Abrir mapa
           </button>
         </div>
-        <ul className="mt-3 flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {op.beaches
             .filter((beach) => beach.active)
             .map((beach) => {
@@ -123,7 +123,7 @@ export function HomeDashboard({
               );
               const ok = cover.present >= cover.target;
               return (
-                <li key={beach.id} className="w-[11.5rem] shrink-0">
+                <li key={beach.id} className="min-w-0">
                   <button
                     type="button"
                     onClick={() => onOpenMap(beach.id)}
@@ -154,7 +154,9 @@ export function HomeDashboard({
               );
             })}
         </ul>
-        <p className="mt-2 text-[11px] text-navy/35">{beachPhotoCredit}</p>
+        <p className="mt-2 max-w-full text-[11px] break-words text-navy/35">
+          {beachPhotoCredit}
+        </p>
       </section>
 
       <div className="grid gap-3 lg:grid-cols-2">
@@ -267,10 +269,10 @@ function Quick({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-2 rounded-2xl border border-[#E8D9C4] bg-white px-3 py-3 text-left text-sm font-semibold text-navy"
+      className="flex min-w-0 items-center gap-2 rounded-2xl border border-[#E8D9C4] bg-white px-3 py-3 text-left text-sm leading-snug font-semibold text-navy"
     >
-      <Icon className="h-4 w-4 text-[#C9862A]" strokeWidth={1.8} />
-      {label}
+      <Icon className="h-4 w-4 shrink-0 text-[#C9862A]" strokeWidth={1.8} />
+      <span className="min-w-0">{label}</span>
     </button>
   );
 }

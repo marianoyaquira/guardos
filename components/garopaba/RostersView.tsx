@@ -64,7 +64,7 @@ export function RostersView() {
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="grid grid-cols-7 gap-1.5">
         {days.map((key) => {
           const on = key === dateKey;
           return (
@@ -77,7 +77,7 @@ export function RostersView() {
                 setPostId(null);
               }}
               className={cn(
-                "min-w-[3.1rem] shrink-0 rounded-xl border px-2 py-2 text-center",
+                "min-w-0 rounded-xl border px-1 py-2 text-center",
                 on
                   ? "border-cyan bg-cyan text-white"
                   : key === demoDay

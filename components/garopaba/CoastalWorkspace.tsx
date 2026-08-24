@@ -124,7 +124,7 @@ export function CoastalWorkspace() {
             </span>
           </p>
         </header>
-        <div className="min-w-0 flex-1 overflow-y-auto p-3 md:p-4 lg:p-5">
+        <div className="min-w-0 max-w-full flex-1 overflow-x-hidden overflow-y-auto p-3 md:p-4 lg:p-5">
           {view === "inicio" && (
             <HomeDashboard
               onOpenMap={(id) => {
@@ -504,8 +504,8 @@ function OperationView() {
           const cover = beachCoverage(beach.id, op.posts, op.assignments, op.staffingMode);
           const ok = cover.present >= cover.target;
           return (
-            <li key={beach.id} className="flex items-center justify-between px-4 py-3">
-              <span className="font-semibold">{beach.name}</span>
+            <li key={beach.id} className="flex min-w-0 items-center justify-between gap-3 px-4 py-3">
+              <span className="min-w-0 truncate font-semibold">{beach.name}</span>
               <span className={ok ? "text-[#1B7A4A]" : "text-[#C9862A]"}>
                 {cover.present}/{cover.target} {ok ? "✓" : "⚠"}
               </span>
@@ -809,31 +809,26 @@ function InventoryView() {
       <h1 className="text-[1.35rem] font-semibold">Inventário</h1>
       <DemoNote />
       <AddInventoryForm />
-      <div className="overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-[#E6EEF2] text-[10px] tracking-[0.08em] text-navy/35 uppercase">
-              <th className="px-4 py-3 font-medium">Item</th>
-              <th className="px-4 py-3 font-medium">Qtd</th>
-              <th className="px-4 py-3 font-medium">Local</th>
-              <th className="px-4 py-3 font-medium">Estado</th>
-              <th className="px-4 py-3 font-medium" />
-            </tr>
-          </thead>
-          <tbody>
-            {op.inventory.map((item) => {
+      <ul className="overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white">
+        {op.inventory.map((item) => {
               const beach = op.beaches.find((row) => row.id === item.beachId);
               const post = op.posts.find((row) => row.id === item.postId);
               return (
-                <tr key={item.id} className="border-t border-[#F0F4F7]">
-                  <td className="px-4 py-3 font-medium">
+                <li
+                  key={item.id}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 border-t border-[#F0F4F7] px-4 py-3 first:border-t-0 sm:grid-cols-[minmax(0,1.4fr)_4.5rem_minmax(0,1fr)_auto_auto]"
+                >
+                  <div className="min-w-0 font-medium">
                     {item.name}
                     <span className="mt-0.5 block text-[11px] font-normal text-navy/40">
                       {item.category}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <input
+                    <span className="mt-0.5 block text-[11px] font-normal text-navy/50 sm:hidden">
+                      {beach?.name}
+                      {post ? ` · ${post.code}` : ""}
+                    </span>
+                  </div>
+                  <input
                       type="number"
                       min={0}
                       value={item.quantity ?? 1}
@@ -842,46 +837,41 @@ function InventoryView() {
                           quantity: Number(event.target.value),
                         })
                       }
-                      className="w-16 rounded-lg border border-[#E6EEF2] px-2 py-1 text-sm"
+                      className="w-16 justify-self-end rounded-lg border border-[#E6EEF2] px-2 py-1 text-sm sm:justify-self-start"
                     />
-                  </td>
-                  <td className="px-4 py-3 text-navy/65">
+                  <p className="col-span-2 hidden min-w-0 truncate text-navy/65 sm:col-span-1 sm:block">
                     {beach?.name}
                     {post ? ` · ${post.code}` : ""}
-                  </td>
-                  <td className="px-4 py-3">
-                    <select
+                  </p>
+                  <select
                       value={item.state}
                       onChange={(event) =>
                         op.updateInventoryItem(item.id, {
                           state: event.target.value as typeof item.state,
                         })
                       }
-                      className="rounded-lg border border-[#E6EEF2] px-2 py-1 text-xs"
+                      className="max-w-full rounded-lg border border-[#E6EEF2] px-2 py-1 text-xs"
                     >
                       <option value="OK">OK</option>
                       <option value="ATENCAO">Atenção</option>
                       <option value="AUSENTE">Ausente</option>
                       <option value="MANUTENCAO">Manutenção</option>
                     </select>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {!item.demo && (
+                    {!item.demo ? (
                       <button
                         type="button"
                         onClick={() => op.removeInventoryItem(item.id)}
-                        className="text-[11px] font-semibold text-[#C24141]"
+                        className="justify-self-end text-[11px] font-semibold text-[#C24141]"
                       >
                         Remover
                       </button>
+                    ) : (
+                      <span />
                     )}
-                  </td>
-                </tr>
+                </li>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+      </ul>
     </div>
   );
 }
