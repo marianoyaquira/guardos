@@ -52,7 +52,7 @@ export type Lifeguard = {
   photo: string;
   role: "guarda-vidas" | "chefe";
   qualification: string;
-  demo: true;
+  demo: boolean;
 };
 
 export type Assignment = {
@@ -89,8 +89,9 @@ export type InventoryItem = {
   category: string;
   beachId: string;
   postId: string | null;
+  quantity: number;
   state: InventoryState;
-  demo: true;
+  demo: boolean;
 };
 
 export type StaffingMode = "base" | "reforco";

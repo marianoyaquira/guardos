@@ -118,15 +118,53 @@ export function openAlerts(
   return gaps + fatigue + openIncidents;
 }
 
+export function alongShore(
+  beaches: Beach[],
+  beach: { id: string; latitude: number; longitude: number; displayOrder: number },
+) {
+  const ordered = [...beaches].sort((a, b) => a.displayOrder - b.displayOrder);
+  const index = ordered.findIndex((row) => row.id === beach.id);
+  const prev = ordered[index - 1];
+  const next = ordered[index + 1];
+  let dLat = -1;
+  let dLng = 0;
+  if (prev && next) {
+    dLat = next.latitude - prev.latitude;
+    dLng = next.longitude - prev.longitude;
+  } else if (next) {
+    dLat = next.latitude - beach.latitude;
+    dLng = next.longitude - beach.longitude;
+  } else if (prev) {
+    dLat = beach.latitude - prev.latitude;
+    dLng = beach.longitude - prev.longitude;
+  }
+  const length = Math.hypot(dLat, dLng) || 1;
+  return { dLat: dLat / length, dLng: dLng / length };
+}
+
+function seaward(along: { dLat: number; dLng: number }) {
+  const left = { lat: -along.dLng, lng: along.dLat };
+  const right = { lat: along.dLng, lng: -along.dLat };
+  return left.lng > right.lng ? left : right;
+}
+
 export function displayCoord(
-  beach: { latitude: number; longitude: number },
+  beach: { id: string; latitude: number; longitude: number; displayOrder: number },
   post: Post,
   index: number,
   total: number,
+  beaches: Beach[] = [],
 ): [number, number] {
   if (post.latitude != null && post.longitude != null) {
     return [post.latitude, post.longitude];
   }
-  const angle = (index / Math.max(total, 1)) * Math.PI * 1.5 - 0.75;
-  return [beach.latitude + Math.cos(angle) * 0.0036, beach.longitude + Math.sin(angle) * 0.0044];
+  const along = alongShore(beaches, beach);
+  const sea = seaward(along);
+  const half = Math.max(0.0015, (Math.max(total, 1) - 1) * 0.00155);
+  const t = total <= 1 ? 0 : (index / (total - 1) - 0.5) * 2;
+  const inland = post.type === "cabine" ? -0.0007 : 0.00045;
+  return [
+    beach.latitude + along.dLat * t * half + sea.lat * inland,
+    beach.longitude + along.dLng * t * half + sea.lng * inland,
+  ];
 }

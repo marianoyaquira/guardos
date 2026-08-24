@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { isPending, operators, voices } from "@/data/proofData";
+import { comingSoonOperators, isPending, operators, voices } from "@/data/proofData";
 import { useI18n } from "@/lib/i18n-context";
 
 export function ProofStrip() {
@@ -48,37 +48,29 @@ export function ProofStrip() {
             {t.proof.operatorsLabel}
           </p>
           <ul className="mt-2.5 flex flex-wrap items-center gap-2">
-            {operators.map((item) =>
-              isPending(item) ? (
-                <li key={item.id}>
-                  <span
-                    className="block h-8 w-[4.75rem] rounded-sm border border-dashed border-navy/14"
-                    aria-label={t.proof.pendingOperator}
-                  />
-                </li>
-              ) : item.comingSoon && item.href ? (
-                <li key={item.id}>
-                  <a
-                    href={item.href}
-                    className="flex h-8 items-center rounded-sm border border-dashed border-navy/20 px-2.5 text-navy/70 transition-colors hover:border-cyan/40 hover:text-navy"
-                  >
-                    <span className="text-[9px] font-semibold tracking-[0.08em] uppercase">
-                      {t.proof.comingSoon}
-                    </span>
-                    <span className="ml-1.5 text-[12px] font-semibold tracking-[-0.02em] text-navy">
-                      {item.name}
-                    </span>
-                  </a>
-                </li>
-              ) : (
-                <li
-                  key={item.id}
-                  className="h-8 rounded-sm border border-navy/10 bg-[#f4f2ee] px-2.5 text-[12px] leading-8 font-semibold tracking-[-0.02em] text-navy"
+            {operators.filter((item) => !isPending(item)).map((item) => (
+              <li
+                key={item.id}
+                className="h-8 rounded-sm border border-navy/10 bg-[#f4f2ee] px-2.5 text-[12px] leading-8 font-semibold tracking-[-0.02em] text-navy"
+              >
+                {item.name}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[10px] font-semibold tracking-[0.18em] text-navy/32 uppercase">
+            {t.proof.comingSoon}
+          </p>
+          <ul className="mt-2 flex flex-wrap items-center gap-2">
+            {comingSoonOperators.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={item.href ?? "/app/garopaba"}
+                  className="flex h-8 items-center rounded-sm border border-dashed border-navy/20 px-2.5 text-[12px] font-semibold tracking-[-0.02em] text-navy transition-colors hover:border-cyan/40"
                 >
                   {item.name}
-                </li>
-              ),
-            )}
+                </a>
+              </li>
+            ))}
           </ul>
           <ul className="mt-2 hidden gap-2 sm:flex">
             {voices.filter(isPending).map((item) => (

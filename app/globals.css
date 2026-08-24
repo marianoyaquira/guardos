@@ -210,6 +210,8 @@ body {
 }
 
 .leaflet-container {
+  isolation: isolate;
+  z-index: 0;
   font-family: inherit;
   background: #eef3f6;
 }

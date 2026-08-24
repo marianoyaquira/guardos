@@ -7,8 +7,11 @@ import {
   CalendarRange,
   ClipboardList,
   Boxes,
+  Home,
   LogOut,
   Map,
+  Maximize2,
+  Minimize2,
   MoreHorizontal,
   Settings,
   Shield,
@@ -16,6 +19,14 @@ import {
   Users,
   Waves,
 } from "lucide-react";
+import {
+  AddInventoryForm,
+  AddPersonForm,
+  AddPostForm,
+} from "@/components/garopaba/CustomizeForms";
+import { HomeDashboard } from "@/components/garopaba/HomeDashboard";
+import { RostersView } from "@/components/garopaba/RostersView";
+import { beachPhoto, beachPhotoCredit } from "@/data/garopaba/photos";
 import { demoClock, demoDay } from "@/data/garopaba/seed";
 import {
   beachCoverage,
@@ -34,6 +45,7 @@ const CoastalMap = dynamic(
 );
 
 const views = [
+  "inicio",
   "mapa",
   "operacao",
   "escalas",
@@ -48,6 +60,7 @@ const views = [
 type View = (typeof views)[number];
 
 const labels: Record<View, string> = {
+  inicio: "Início",
   mapa: "Mapa",
   operacao: "Operação",
   escalas: "Escalas",
@@ -60,7 +73,7 @@ const labels: Record<View, string> = {
 };
 
 export function CoastalWorkspace() {
-  const [view, setView] = useState<View>("mapa");
+  const [view, setView] = useState<View>("inicio");
   const [moreOpen, setMoreOpen] = useState(false);
   const [beachId, setBeachId] = useState<string | null>(null);
   const [postId, setPostId] = useState<string | null>(null);
@@ -112,6 +125,20 @@ export function CoastalWorkspace() {
           </p>
         </header>
         <div className="min-w-0 flex-1 overflow-y-auto p-3 md:p-4 lg:p-5">
+          {view === "inicio" && (
+            <HomeDashboard
+              onOpenMap={(id) => {
+                if (id) {
+                  setBeachId(id);
+                  setPostId(null);
+                }
+                openView("mapa");
+              }}
+              onOpenRosters={() => openView("escalas")}
+              onOpenOperation={() => openView("operacao")}
+              onOpenFatigue={() => openView("fadiga")}
+            />
+          )}
           {view === "mapa" && (
             <MapView
               beachId={beachId}
@@ -124,7 +151,7 @@ export function CoastalWorkspace() {
             />
           )}
           {view === "operacao" && <OperationView />}
-          {view === "escalas" && <PeopleView mode="escalas" />}
+          {view === "escalas" && <RostersView />}
           {view === "fadiga" && <PeopleView mode="fadiga" />}
           {view === "equipe" && <PeopleView mode="equipe" />}
           {view === "ocorrencias" && <IncidentsView />}
@@ -135,14 +162,14 @@ export function CoastalWorkspace() {
       </div>
 
       {moreOpen && (
-        <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-40 lg:hidden">
+        <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-[100] lg:hidden">
           <button
             type="button"
             className="fixed inset-0 bg-navy/30"
             onClick={() => setMoreOpen(false)}
           />
           <div className="relative mx-3 mb-2 overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white">
-            {(["fadiga", "equipe", "ocorrencias", "estoque", "temporada", "config"] as View[]).map(
+            {(["operacao", "fadiga", "equipe", "ocorrencias", "estoque", "temporada", "config"] as View[]).map(
               (id) => (
                 <button
                   key={id}
@@ -159,9 +186,9 @@ export function CoastalWorkspace() {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E6EEF2] bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-[100] border-t border-[#E6EEF2] bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
         <ul className="grid h-[4.25rem] grid-cols-4">
-          {(["mapa", "operacao", "escalas"] as View[]).map((id) => (
+          {(["inicio", "mapa", "escalas"] as View[]).map((id) => (
             <li key={id}>
               <button
                 type="button"
@@ -180,7 +207,15 @@ export function CoastalWorkspace() {
             <button
               type="button"
               onClick={() => setMoreOpen((value) => !value)}
-              className="flex h-full w-full flex-col items-center justify-center gap-1 text-[11px] font-semibold text-navy/45"
+              className={cn(
+                "flex h-full w-full flex-col items-center justify-center gap-1 text-[11px] font-semibold",
+                moreOpen ||
+                  (["operacao", "fadiga", "equipe", "ocorrencias", "estoque", "temporada", "config"] as View[]).includes(
+                    view,
+                  )
+                  ? "text-cyan"
+                  : "text-navy/45",
+              )}
             >
               <MoreHorizontal className="h-5 w-5" />
               Mais
@@ -194,6 +229,7 @@ export function CoastalWorkspace() {
 
 function NavIcon({ id }: { id: View }) {
   const Icon = {
+    inicio: Home,
     mapa: Map,
     operacao: Waves,
     escalas: CalendarRange,
@@ -226,6 +262,7 @@ function MapView({
   onBeach: (id: string) => void;
   onPost: (id: string) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const op = useGaropaba();
   const city = municipalityCoverage(op.beaches, op.posts, op.assignments, op.staffingMode);
   const alerts = openAlerts(
@@ -261,13 +298,33 @@ function MapView({
         <Kpi label="Alertas" value={String(alerts)} />
       </div>
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="h-[min(68vh,640px)] overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white">
+        <div
+          className={cn(
+            "relative overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white",
+            expanded
+              ? "fixed inset-0 z-40 rounded-none border-0 lg:inset-3 lg:rounded-3xl lg:border max-lg:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]"
+              : "h-[min(68vh,640px)]",
+          )}
+        >
           <CoastalMap
             selectedBeachId={beachId}
             selectedPostId={postId}
             onSelectBeach={onBeach}
             onSelectPost={onPost}
+            layoutTick={expanded}
           />
+          <button
+            type="button"
+            onClick={() => setExpanded((value) => !value)}
+            className="absolute top-3 right-3 z-20 grid h-10 w-10 place-items-center rounded-xl border border-[#E6EEF2] bg-white text-navy/70 shadow-[0_8px_20px_rgb(7_27_51_/_0.08)]"
+            aria-label={expanded ? "Sair da tela cheia" : "Tela cheia"}
+          >
+            {expanded ? (
+              <Minimize2 className="h-4 w-4" />
+            ) : (
+              <Maximize2 className="h-4 w-4" />
+            )}
+          </button>
         </div>
         <aside className="rounded-2xl border border-[#E6EEF2] bg-white p-4">
           {post && beach ? (
@@ -276,8 +333,8 @@ function MapView({
             <BeachPanel beachId={beach.id} onPost={onPost} />
           ) : (
             <p className="text-sm text-navy/50">
-              Toque numa praia para ver os postos. Os pontos sem coordenada oficial
-              aparecem ao redor do marco da praia — posição provisória e editável.
+              Toque numa praia ou dê zoom para ver os postos na linha da costa.
+              Arraste o cartão da praia ou o posto — a posição fica gravada.
             </p>
           )}
         </aside>
@@ -312,6 +369,12 @@ function BeachPanel({
   );
   return (
     <div className="space-y-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={beachPhoto(beach.id)}
+        alt={`Praia ${beach.name}`}
+        className="h-28 w-full rounded-xl object-cover"
+      />
       <div>
         <p className="text-[11px] font-semibold tracking-[0.08em] text-navy/40 uppercase">
           Praia
@@ -373,6 +436,12 @@ function PostPanel({ postId }: { postId: string }) {
     .find((person) => person?.role === "chefe");
   return (
     <div className="space-y-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={beachPhoto(post.beachId)}
+        alt={beach ? `Praia ${beach.name}` : post.name}
+        className="h-28 w-full rounded-xl object-cover"
+      />
       <p className="text-[11px] font-semibold tracking-[0.08em] text-navy/40 uppercase">
         {beach?.name} · {post.code}
       </p>
@@ -381,11 +450,12 @@ function PostPanel({ postId }: { postId: string }) {
         {present.length} / {target} presentes
         {present.length > target ? ` · +${present.length - target} apoio` : ""}
       </p>
-      {post.latitude == null && (
-        <p className="text-[11px] text-navy/40">
-          Sem coordenada oficial do posto. Posição no mapa é provisória.
-        </p>
-      )}
+      <p className="text-[11px] text-navy/40">
+        {post.latitude == null
+          ? "Sem coordenada oficial. Arraste o posto no mapa — a posição fica gravada."
+          : "Posição gravada neste aparelho. Arraste de novo para ajustar."}
+      </p>
+      <p className="text-[11px] text-navy/35">{beachPhotoCredit}</p>
       <p className="text-xs text-navy/50">
         Responsável: {chief?.name ?? "—"}
       </p>
@@ -479,10 +549,15 @@ function PeopleView({ mode }: { mode: "escalas" | "fadiga" | "equipe" }) {
   );
   const title =
     mode === "escalas" ? "Escalas" : mode === "fadiga" ? "Fadiga" : "Equipe";
+  const unassigned =
+    mode === "equipe"
+      ? op.people.filter((person) => !op.assignments.some((row) => row.personId === person.id))
+      : [];
   return (
     <div className="space-y-4">
       <h1 className="text-[1.35rem] font-semibold">{title}</h1>
       <DemoNote />
+      {mode === "equipe" && <AddPersonForm />}
       <div className="flex flex-wrap gap-1.5">
         <FilterChip label="Todos" on={filter === "todos"} onClick={() => setFilter("todos")} />
         {op.beaches.map((beach) => (
@@ -502,7 +577,14 @@ function PeopleView({ mode }: { mode: "escalas" | "fadiga" | "equipe" }) {
           if (!person) return null;
           const fatigue = fatigueLevel(row, op.attentionMinutes, op.highMinutes);
           return (
-            <li key={row.id} className="rounded-2xl border border-[#E6EEF2] bg-white p-4">
+            <li key={row.id} className="flex gap-3 rounded-2xl border border-[#E6EEF2] bg-white p-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={person.photo}
+                alt={person.name}
+                className="h-12 w-12 rounded-full object-cover"
+              />
+              <div className="min-w-0 flex-1">
               <p className="font-semibold">{person.name}</p>
               <p className="text-xs text-navy/45">
                 {beach?.name} · {post?.code}
@@ -536,10 +618,51 @@ function PeopleView({ mode }: { mode: "escalas" | "fadiga" | "equipe" }) {
                   ))}
                 </div>
               )}
+              {mode === "equipe" && !person.demo && (
+                <button
+                  type="button"
+                  onClick={() => op.removePerson(person.id)}
+                  className="mt-2 text-[11px] font-semibold text-[#C24141]"
+                >
+                  Remover
+                </button>
+              )}
+              </div>
             </li>
           );
         })}
       </ul>
+      {unassigned.length > 0 && (
+        <div>
+          <p className="text-[11px] font-semibold tracking-[0.08em] text-navy/40 uppercase">
+            Sem posto
+          </p>
+          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+            {unassigned.map((person) => (
+              <li
+                key={person.id}
+                className="flex items-center gap-3 rounded-2xl border border-dashed border-[#E6EEF2] bg-white p-4"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={person.photo} alt={person.name} className="h-12 w-12 rounded-full object-cover" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold">{person.name}</p>
+                  <p className="text-xs text-navy/45">Ainda sem escala</p>
+                  {!person.demo && (
+                    <button
+                      type="button"
+                      onClick={() => op.removePerson(person.id)}
+                      className="mt-1 text-[11px] font-semibold text-[#C24141]"
+                    >
+                      Remover
+                    </button>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -685,25 +808,80 @@ function InventoryView() {
     <div className="space-y-4">
       <h1 className="text-[1.35rem] font-semibold">Inventário</h1>
       <DemoNote />
-      <ul className="space-y-2">
-        {op.inventory.map((item) => {
-          const beach = op.beaches.find((row) => row.id === item.beachId);
-          return (
-            <li
-              key={item.id}
-              className="flex items-center justify-between rounded-2xl border border-[#E6EEF2] bg-white px-4 py-3"
-            >
-              <span>
-                <span className="block font-semibold">{item.name}</span>
-                <span className="text-xs text-navy/45">
-                  {beach?.name} · {item.category}
-                </span>
-              </span>
-              <span className="text-xs font-semibold">{item.state}</span>
-            </li>
-          );
-        })}
-      </ul>
+      <AddInventoryForm />
+      <div className="overflow-hidden rounded-2xl border border-[#E6EEF2] bg-white">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-[#E6EEF2] text-[10px] tracking-[0.08em] text-navy/35 uppercase">
+              <th className="px-4 py-3 font-medium">Item</th>
+              <th className="px-4 py-3 font-medium">Qtd</th>
+              <th className="px-4 py-3 font-medium">Local</th>
+              <th className="px-4 py-3 font-medium">Estado</th>
+              <th className="px-4 py-3 font-medium" />
+            </tr>
+          </thead>
+          <tbody>
+            {op.inventory.map((item) => {
+              const beach = op.beaches.find((row) => row.id === item.beachId);
+              const post = op.posts.find((row) => row.id === item.postId);
+              return (
+                <tr key={item.id} className="border-t border-[#F0F4F7]">
+                  <td className="px-4 py-3 font-medium">
+                    {item.name}
+                    <span className="mt-0.5 block text-[11px] font-normal text-navy/40">
+                      {item.category}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      type="number"
+                      min={0}
+                      value={item.quantity ?? 1}
+                      onChange={(event) =>
+                        op.updateInventoryItem(item.id, {
+                          quantity: Number(event.target.value),
+                        })
+                      }
+                      className="w-16 rounded-lg border border-[#E6EEF2] px-2 py-1 text-sm"
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-navy/65">
+                    {beach?.name}
+                    {post ? ` · ${post.code}` : ""}
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={item.state}
+                      onChange={(event) =>
+                        op.updateInventoryItem(item.id, {
+                          state: event.target.value as typeof item.state,
+                        })
+                      }
+                      className="rounded-lg border border-[#E6EEF2] px-2 py-1 text-xs"
+                    >
+                      <option value="OK">OK</option>
+                      <option value="ATENCAO">Atenção</option>
+                      <option value="AUSENTE">Ausente</option>
+                      <option value="MANUTENCAO">Manutenção</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {!item.demo && (
+                      <button
+                        type="button"
+                        onClick={() => op.removeInventoryItem(item.id)}
+                        className="text-[11px] font-semibold text-[#C24141]"
+                      >
+                        Remover
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -806,6 +984,8 @@ function SettingsView() {
         A reforçada usa o campo do posto. Nenhum número extra de sábado foi inventado:
         por agora reforço = base, até o supervisor editar.
       </p>
+      <AddPostForm />
+      <AddPersonForm />
       <ul className="space-y-3">
         {op.posts.map((post) => {
           const beach = op.beaches.find((row) => row.id === post.beachId);
@@ -842,6 +1022,15 @@ function SettingsView() {
                   />
                 </label>
               </div>
+              {post.id.startsWith("custom-") && (
+                <button
+                  type="button"
+                  onClick={() => op.removePost(post.id)}
+                  className="mt-2 text-[11px] font-semibold text-[#C24141]"
+                >
+                  Remover posto
+                </button>
+              )}
             </li>
           );
         })}
