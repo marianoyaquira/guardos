@@ -65,18 +65,7 @@ export function SettingsScreen() {
           className="flex w-full items-center justify-between rounded-xl border border-dashed border-[#E6EEF2] px-3 py-3 text-left"
         >
           <span>
-            <span className="block text-sm font-semibold text-navy">Garopaba</span>
-            <span className="mt-0.5 block text-xs text-navy/45">
-              Coming soon · Operação Veraneio
-            </span>
-          </span>
-        </a>
-        <a
-          href="/app/garopaba"
-          className="flex w-full items-center justify-between rounded-xl border border-dashed border-[#E6EEF2] px-3 py-3 text-left"
-        >
-          <span>
-            <span className="block text-sm font-semibold text-navy">Garopaba</span>
+            <span className="block text-sm font-semibold text-navy">Garopaba Baywatch</span>
             <span className="mt-0.5 block text-xs text-navy/45">
               Coming soon · Operação Veraneio
             </span>

@@ -193,7 +193,8 @@ export function OperationalMap({
         preview
           ? "rounded-xl border border-[#E6EEF2]"
           : "rounded-2xl border border-[#E6EEF2] shadow-[0_8px_24px_rgb(7_27_51_/_0.03)]",
-        expanded && "fixed inset-3 z-50 rounded-3xl shadow-2xl",
+        expanded &&
+          "fixed inset-3 z-40 rounded-3xl shadow-2xl max-lg:inset-x-0 max-lg:top-0 max-lg:bottom-[calc(4.25rem+env(safe-area-inset-bottom))] max-lg:rounded-none",
       )}
     >
       <div
@@ -203,7 +204,8 @@ export function OperationalMap({
             "aspect-[16/10] min-h-[220px] sm:min-h-[260px]",
           size === "section" && "h-[min(52vh,520px)] min-h-[320px]",
           size === "capture" && "h-[min(56vh,620px)] min-h-[300px]",
-          !preview && size === "app" && "h-[min(68vh,720px)] min-h-[420px]",
+          !preview && size === "app" && !expanded && "h-[min(68vh,720px)] min-h-[420px]",
+          expanded && "h-full min-h-0",
         )}
         onClick={() => setSelected(null)}
       >

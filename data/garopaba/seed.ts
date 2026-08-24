@@ -1,3 +1,4 @@
+import { portraitFor } from "@/data/garopaba/photos";
 import type {
   Assignment,
   Beach,
@@ -53,12 +54,22 @@ export const seedBeaches: Beach[] = [
     anchorSource: "provisional",
   },
   {
+    id: "vigia",
+    name: "Vigia",
+    slug: "vigia",
+    latitude: -28.021925,
+    longitude: -48.613146,
+    displayOrder: 4,
+    active: true,
+    anchorSource: "provisional",
+  },
+  {
     id: "silveira",
     name: "Silveira",
     slug: "silveira",
     latitude: -28.037473,
     longitude: -48.607898,
-    displayOrder: 4,
+    displayOrder: 5,
     active: true,
     anchorSource: "documented",
   },
@@ -68,7 +79,7 @@ export const seedBeaches: Beach[] = [
     slug: "ferrugem",
     latitude: -28.07539,
     longitude: -48.62667,
-    displayOrder: 5,
+    displayOrder: 6,
     active: true,
     anchorSource: "documented",
   },
@@ -78,7 +89,7 @@ export const seedBeaches: Beach[] = [
     slug: "barra",
     latitude: -28.090056,
     longitude: -48.631946,
-    displayOrder: 6,
+    displayOrder: 7,
     active: true,
     anchorSource: "provisional",
   },
@@ -88,7 +99,7 @@ export const seedBeaches: Beach[] = [
     slug: "ouvidor",
     latitude: -28.104722,
     longitude: -48.637222,
-    displayOrder: 7,
+    displayOrder: 8,
     active: true,
     anchorSource: "documented",
   },
@@ -104,6 +115,7 @@ export const seedPosts: Post[] = [
   post("c-c03", "centro", "C03", "Posto C03", 3),
   post("c-c04", "centro", "C04", "Posto C04", 2),
   post("c-c05", "centro", "C05", "Posto C05", 1),
+  post("v-v01", "vigia", "V01", "Posto V01", 2),
   post("sv-sv01", "silveira", "SV01", "Posto SV01", 4),
   post("sv-sv02", "silveira", "SV02", "Posto SV02", 2),
   post("sv-sv03", "silveira", "SV03", "Posto SV03", 2),
@@ -154,15 +166,12 @@ const lastNames = [
   "Nunes", "Barbosa", "Teixeira",
 ];
 
-function initialsMark(initials: string) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect fill="#0C2744" width="96" height="96"/><text x="50%" y="55%" text-anchor="middle" fill="white" font-size="28" font-family="sans-serif">${initials}</text></svg>`;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
 function buildPeopleAndAssignments() {
   const people: Lifeguard[] = [];
   const assignments: Assignment[] = [];
   let index = 0;
+  let womanIndex = 0;
+  let manIndex = 0;
 
   for (const row of seedPosts) {
     for (let slot = 0; slot < row.baseTarget; slot += 1) {
@@ -171,13 +180,18 @@ function buildPeopleAndAssignments() {
       const name = `${first} ${last}`;
       const initials = `${first[0]}${last[0]}`.toUpperCase();
       const id = `gv-${String(index + 1).padStart(2, "0")}`;
+      const woman = [
+        "Ana", "Beatriz", "Camila", "Juliana", "Larissa", "Mariana", "Aline",
+        "Patrícia", "Renata", "Carolina", "Fernanda", "Isabela", "Natália",
+        "Priscila", "Sabrina", "Tatiana", "Daniela",
+      ].includes(first);
       people.push({
         id,
         name,
         initials: people.some((person) => person.initials === initials)
           ? `${initials}${index}`
           : initials,
-        photo: initialsMark(initials),
+        photo: portraitFor(first, woman ? womanIndex++ : manIndex++),
         role: slot === 0 && row.baseTarget >= 3 ? "chefe" : "guarda-vidas",
         qualification: "Guarda-vidas",
         demo: true,
@@ -238,6 +252,7 @@ export const seedInventory: InventoryItem[] = seedBeaches.flatMap((beach) => [
     category: "Comunicação",
     beachId: beach.id,
     postId: null,
+    quantity: 1,
     state: beach.id === "siriu" ? "ATENCAO" : "OK",
     demo: true,
   },
@@ -247,6 +262,7 @@ export const seedInventory: InventoryItem[] = seedBeaches.flatMap((beach) => [
     category: "Resgate",
     beachId: beach.id,
     postId: null,
+    quantity: 1,
     state: "OK",
     demo: true,
   },

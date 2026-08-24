@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  demoDay,
   seedAssignments,
   seedBeaches,
   seedIncidents,
@@ -27,6 +28,16 @@ import type {
   Season,
   StaffingMode,
 } from "@/data/garopaba/types";
+import {
+  applyMapAnchors,
+  captureAnchorsFromState,
+  pinBeachAnchor,
+  pinPostAnchor,
+} from "@/lib/coastal/anchors";
+import {
+  assignmentsOnDay,
+  type DayPatch,
+} from "@/lib/coastal/seasonPlan";
 
 type CoastalState = {
   beaches: Beach[];
@@ -40,6 +51,7 @@ type CoastalState = {
   staffingMode: StaffingMode;
   attentionMinutes: number;
   highMinutes: number;
+  dayPatches: Record<string, Record<string, DayPatch>>;
 };
 
 type CoastalContextValue = CoastalState & {
@@ -51,12 +63,44 @@ type CoastalContextValue = CoastalState & {
   setThresholds: (attention: number, high: number) => void;
   movePerson: (personId: string, postId: string) => void;
   setAttendance: (personId: string, attendance: Assignment["attendance"]) => void;
+  setDayAttendance: (
+    dateKey: string,
+    personId: string,
+    attendance: Assignment["attendance"],
+  ) => void;
+  movePersonOnDay: (dateKey: string, personId: string, postId: string) => void;
+  dayAssignments: (dateKey: string) => Assignment[];
   toggleBreak: (personId: string) => void;
   addIncident: (input: Omit<Incident, "id" | "demo">) => void;
   setIncidentStatus: (id: string, status: Incident["status"]) => void;
+  addPerson: (input: {
+    name: string;
+    role: Lifeguard["role"];
+    photo?: string;
+    postId?: string;
+  }) => void;
+  addPost: (input: {
+    beachId: string;
+    code: string;
+    name: string;
+    type: Post["type"];
+    baseTarget: number;
+  }) => void;
+  addInventoryItem: (input: {
+    name: string;
+    category: string;
+    beachId: string;
+    postId: string | null;
+    quantity: number;
+    state: InventoryItem["state"];
+  }) => void;
+  updateInventoryItem: (id: string, patch: Partial<InventoryItem>) => void;
+  removeInventoryItem: (id: string) => void;
+  removePerson: (id: string) => void;
+  removePost: (id: string) => void;
 };
 
-const STORAGE_KEY = "guardos.garopaba.v1";
+const STORAGE_KEY = "guardos.garopaba.v3";
 const CoastalContext = createContext<CoastalContextValue | null>(null);
 
 function load(): CoastalState {
@@ -72,6 +116,7 @@ function load(): CoastalState {
     staffingMode: "base",
     attentionMinutes: 240,
     highMinutes: 360,
+    dayPatches: {},
   };
 }
 
@@ -84,8 +129,40 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as CoastalState;
-        if (parsed.beaches && parsed.posts) setState({ ...load(), ...parsed });
+        if (parsed.beaches && parsed.posts) {
+          const seed = load();
+          const storedPeople = parsed.people ?? [];
+          const people = [
+            ...storedPeople.map((person) => {
+              const seeded = seed.people.find((row) => row.id === person.id);
+              if (seeded && person.photo.startsWith("data:image/svg")) {
+                return { ...person, photo: seeded.photo };
+              }
+              return person;
+            }),
+            ...seed.people.filter(
+              (person) => !storedPeople.some((row) => row.id === person.id),
+            ),
+          ];
+          const merged = {
+            ...seed,
+            ...parsed,
+            people,
+            inventory: (parsed.inventory ?? seed.inventory).map((item) => ({
+              quantity: 1,
+              ...item,
+            })),
+            dayPatches: parsed.dayPatches ?? {},
+          };
+          captureAnchorsFromState(merged.beaches, merged.posts);
+          setState(applyMapAnchors(merged));
+        }
       }
+    } catch {
+      /* seed */
+    }
+    try {
+      setState((current) => applyMapAnchors(current));
     } catch {
       /* seed */
     }
@@ -101,6 +178,9 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
     () => ({
       ...state,
       updateBeach(id, patch) {
+        if (patch.latitude != null && patch.longitude != null) {
+          pinBeachAnchor(id, patch.latitude, patch.longitude);
+        }
         setState((current) => ({
           ...current,
           beaches: current.beaches.map((row) =>
@@ -109,6 +189,9 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
         }));
       },
       updatePost(id, patch) {
+        if (patch.latitude != null && patch.longitude != null) {
+          pinPostAnchor(id, patch.latitude, patch.longitude);
+        }
         setState((current) => ({
           ...current,
           posts: current.posts.map((row) => (row.id === id ? { ...row, ...patch } : row)),
@@ -150,6 +233,62 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
           ),
         }));
       },
+      setDayAttendance(dateKey, personId, attendance) {
+        setState((current) => ({
+          ...current,
+          assignments:
+            dateKey === demoDay
+              ? current.assignments.map((row) =>
+                  row.personId === personId ? { ...row, attendance } : row,
+                )
+              : current.assignments,
+          dayPatches: {
+            ...current.dayPatches,
+            [dateKey]: {
+              ...current.dayPatches[dateKey],
+              [personId]: {
+                ...current.dayPatches[dateKey]?.[personId],
+                attendance,
+              },
+            },
+          },
+        }));
+      },
+      movePersonOnDay(dateKey, personId, postId) {
+        const post = state.posts.find((row) => row.id === postId);
+        if (!post) return;
+        setState((current) => ({
+          ...current,
+          assignments:
+            dateKey === demoDay
+              ? current.assignments.map((row) =>
+                  row.personId === personId
+                    ? { ...row, postId, beachId: post.beachId }
+                    : row,
+                )
+              : current.assignments,
+          dayPatches: {
+            ...current.dayPatches,
+            [dateKey]: {
+              ...current.dayPatches[dateKey],
+              [personId]: {
+                ...current.dayPatches[dateKey]?.[personId],
+                postId,
+                beachId: post.beachId,
+              },
+            },
+          },
+        }));
+      },
+      dayAssignments(dateKey) {
+        return assignmentsOnDay(
+          dateKey,
+          state.posts,
+          state.people,
+          state.assignments,
+          state.dayPatches,
+        );
+      },
       toggleBreak(personId) {
         setState((current) => ({
           ...current,
@@ -176,6 +315,118 @@ export function GaropabaProvider({ children }: { children: ReactNode }) {
           ...current,
           incidents: current.incidents.map((row) =>
             row.id === id ? { ...row, status } : row,
+          ),
+        }));
+      },
+      addPerson(input) {
+        const parts = input.name.trim().split(/\s+/);
+        const initials = `${parts[0]?.[0] ?? "G"}${parts[1]?.[0] ?? parts[0]?.[1] ?? "V"}`.toUpperCase();
+        const id = `gv-custom-${Date.now()}`;
+        const post = input.postId
+          ? state.posts.find((row) => row.id === input.postId)
+          : undefined;
+        const person: Lifeguard = {
+          id,
+          name: input.name.trim(),
+          initials,
+          photo: input.photo || "/guardos/avatars/garopaba/m10.jpg",
+          role: input.role,
+          qualification: "Guarda-vidas",
+          demo: false,
+        };
+        setState((current) => ({
+          ...current,
+          people: [...current.people, person],
+          assignments: post
+            ? [
+                ...current.assignments,
+                {
+                  id: `as-${id}`,
+                  personId: id,
+                  beachId: post.beachId,
+                  postId: post.id,
+                  startTime: current.season.defaultStartTime,
+                  endTime: current.season.defaultEndTime,
+                  attendance: "escalado",
+                  onBreak: false,
+                  minutesOnDuty: 0,
+                  minutesOnPost: 0,
+                  minutesWithoutBreak: 0,
+                  notes: "",
+                },
+              ]
+            : current.assignments,
+        }));
+      },
+      addPost(input) {
+        const code = input.code.trim().toUpperCase();
+        const id = `custom-${input.beachId}-${code}-${Date.now()}`;
+        const target = Math.max(0, input.baseTarget);
+        setState((current) => ({
+          ...current,
+          posts: [
+            ...current.posts,
+            {
+              id,
+              beachId: input.beachId,
+              code,
+              name: input.name.trim() || `Posto ${code}`,
+              type: input.type,
+              latitude: null,
+              longitude: null,
+              baseTarget: target,
+              reinforcedTarget: target,
+              active: true,
+            },
+          ],
+        }));
+      },
+      addInventoryItem(input) {
+        setState((current) => ({
+          ...current,
+          inventory: [
+            ...current.inventory,
+            {
+              id: `inv-custom-${Date.now()}`,
+              name: input.name.trim(),
+              category: input.category.trim() || "Geral",
+              beachId: input.beachId,
+              postId: input.postId,
+              quantity: Math.max(0, input.quantity),
+              state: input.state,
+              demo: false,
+            },
+          ],
+        }));
+      },
+      updateInventoryItem(id, patch) {
+        setState((current) => ({
+          ...current,
+          inventory: current.inventory.map((row) =>
+            row.id === id ? { ...row, ...patch } : row,
+          ),
+        }));
+      },
+      removeInventoryItem(id) {
+        setState((current) => ({
+          ...current,
+          inventory: current.inventory.filter((row) => row.id !== id),
+        }));
+      },
+      removePerson(id) {
+        setState((current) => ({
+          ...current,
+          people: current.people.filter((row) => row.id !== id),
+          assignments: current.assignments.filter((row) => row.personId !== id),
+        }));
+      },
+      removePost(id) {
+        setState((current) => ({
+          ...current,
+          posts: current.posts.filter((row) => row.id !== id),
+          assignments: current.assignments.filter((row) => row.postId !== id),
+          inventory: current.inventory.map((row) =>
+            row.postId === id ? { ...row, postId: null } : row,
           ),
         }));
       },

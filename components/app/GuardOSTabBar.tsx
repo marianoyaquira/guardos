@@ -61,7 +61,7 @@ export function GuardOSTabBar({
   return (
     <>
       {moreOpen && (
-        <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-40 lg:hidden">
+        <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-[100] lg:hidden">
           <button
             type="button"
             className="fixed inset-0 bg-navy/30"
@@ -113,7 +113,7 @@ export function GuardOSTabBar({
       )}
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E6EEF2] bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-[100] border-t border-[#E6EEF2] bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label={t.ui.navMap}
       >
         <ul className="grid h-[4.25rem] grid-cols-4">
